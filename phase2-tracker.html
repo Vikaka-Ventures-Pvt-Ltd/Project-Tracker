@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartnerOS · Phase 2 Tracker</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121a2e; --panel2:#0f1626; --line:#22304d;
+    --ink:#e8edf7; --muted:#93a1bd; --faint:#6b7a99;
+    --done:#22c55e; --done-bg:#0e2a1c; --done-line:#1c5538;
+    --prog:#f59e0b; --prog-bg:#2a2110; --prog-line:#5c4517;
+    --todo:#64748b; --todo-bg:#161d2e; --todo-line:#2b3852;
+    --eye:#38bdf8; --eye-bg:#0a2230; --eye-line:#15455c;
+    --accent:#5b8cff; --accent2:#8b5cf6;
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 12px 30px -12px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:radial-gradient(1200px 600px at 80% -10%, #16223f 0%, var(--bg) 55%);
+    color:var(--ink); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:40px 20px 80px;
+  }
+  .wrap{max-width:1080px; margin:0 auto}
+  header.top{margin-bottom:28px}
+  .eyebrow{color:var(--accent); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:12px}
+  h1{margin:6px 0 6px; font-size:34px; letter-spacing:-.02em}
+  .sub{color:var(--muted); font-size:15px; max-width:680px}
+  .meta-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+  .pill{background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:6px 13px; font-size:12.5px; color:var(--muted)}
+  .pill b{color:var(--ink)}
+
+  /* summary cards */
+  .cards{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:26px 0 10px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow)}
+  .card .n{font-size:30px; font-weight:800; letter-spacing:-.02em}
+  .card .l{color:var(--muted); font-size:12.5px; margin-top:2px}
+  .card.green .n{color:var(--done)} .card.amber .n{color:var(--prog)} .card.blue .n{color:var(--accent)}
+
+  /* progress bar */
+  .progress{margin:22px 0 34px}
+  .progress .track{height:14px; background:var(--panel); border:1px solid var(--line); border-radius:999px; overflow:hidden; display:flex}
+  .progress .fill{background:linear-gradient(90deg,var(--accent),var(--accent2)); height:100%}
+  .progress .cap{display:flex; justify-content:space-between; margin-top:8px; color:var(--muted); font-size:12.5px}
+
+  h2.sec{font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin:34px 0 14px; font-weight:700}
+
+  /* sprint */
+  .sprint{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:14px; margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden}
+  .sprint .head{display:flex; align-items:center; gap:14px; padding:16px 18px}
+  .sprint .num{flex:0 0 auto; width:42px; height:42px; border-radius:11px; display:grid; place-items:center; font-weight:800; font-size:17px; background:#0c1322; border:1px solid var(--line)}
+  .sprint.done .num{color:var(--done); border-color:var(--done-line); background:var(--done-bg)}
+  .sprint.inprog .num{color:var(--prog); border-color:var(--prog-line); background:var(--prog-bg)}
+  .sprint.todo .num{color:var(--todo)}
+  .sprint .titles{flex:1 1 auto; min-width:0}
+  .sprint .t{font-weight:700; font-size:16px}
+  .sprint .win{color:var(--faint); font-size:12.5px; margin-top:1px}
+  .status{flex:0 0 auto; font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 11px; border-radius:999px; border:1px solid}
+  .status.done{color:var(--done); background:var(--done-bg); border-color:var(--done-line)}
+  .status.inprog{color:var(--prog); background:var(--prog-bg); border-color:var(--prog-line)}
+  .status.todo{color:var(--todo); background:var(--todo-bg); border-color:var(--todo-line)}
+  .sprint .body{padding:0 18px 18px; border-top:1px solid var(--line)}
+  .grp{margin-top:16px}
+  .grp h4{margin:0 0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+  ul.tasks{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:6px 22px}
+  ul.tasks li{position:relative; padding-left:24px; color:var(--ink); font-size:13.5px}
+  ul.tasks li::before{content:""; position:absolute; left:2px; top:6px; width:14px; height:14px; border-radius:4px}
+  .sprint.done ul.tasks li::before{background:var(--done-bg); border:1px solid var(--done-line)}
+  .sprint.done ul.tasks li::after{content:"✓"; position:absolute; left:4px; top:1px; color:var(--done); font-size:11px; font-weight:800}
+  .sprint.todo ul.tasks li::before{background:var(--todo-bg); border:1px dashed var(--todo-line)}
+  ul.tasks li small{color:var(--faint)}
+
+  /* per-task overrides (used inside an in-progress sprint) */
+  ul.tasks li.t-done::before{background:var(--done-bg)!important; border:1px solid var(--done-line)!important}
+  ul.tasks li.t-done::after{content:"✓"!important; position:absolute; left:4px; top:1px; color:var(--done); font-size:11px; font-weight:800}
+  ul.tasks li.t-todo::before{background:var(--todo-bg)!important; border:1px dashed var(--todo-line)!important}
+  ul.tasks li.t-todo::after{content:""!important}
+  ul.tasks li.t-todo{color:var(--muted)}
+  .tag{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:5px; margin-left:6px; vertical-align:middle}
+  .tag.t-done{color:var(--done); background:var(--done-bg); border:1px solid var(--done-line)}
+  .tag.t-todo{color:var(--prog); background:var(--prog-bg); border:1px solid var(--prog-line)}
+
+  /* "visible on frontend" block */
+  .visible{margin-top:16px; background:var(--eye-bg); border:1px solid var(--eye-line); border-radius:11px; padding:13px 15px}
+  .visible h4{margin:0 0 9px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--eye); display:flex; align-items:center; gap:7px}
+  .screens{display:flex; flex-wrap:wrap; gap:8px}
+  .screen{font-size:12.5px; color:var(--ink); background:#0c1a25; border:1px solid var(--eye-line); border-radius:8px; padding:6px 11px; display:flex; gap:7px; align-items:center}
+  .screen .where{color:var(--eye); font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:.04em}
+  @media (max-width:780px){ .cards{grid-template-columns:repeat(2,1fr)} ul.tasks{grid-template-columns:1fr} }
+  footer{margin-top:40px; color:var(--faint); font-size:12px; text-align:center}
+  footer code{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:2px 7px; color:var(--muted)}
+
+  @media print{
+    @page{ size:A4; margin:14mm }
+    html,body{ background:var(--bg)!important }
+    *{ -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important }
+    body{ padding:0 }
+    .sprint, .card, .visible{ break-inside:avoid; page-break-inside:avoid }
+    h2.sec{ break-after:avoid }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">PartnerOS · Delivery Tracker</div>
+    <h1>Phase 2 — Sprint Progress</h1>
+    <p class="sub">End-to-end vertical slices (schema → API → UI → tests) shipped on the existing v1 design system. Each sprint below shows the concrete tasks delivered and the screens users see. Sprints 1–4 are merged; Sprint 5 is in review (PR merging end of day today); Sprints 6–9 are scoped and pending.</p>
+    <div class="meta-row">
+      <span class="pill">Status as of <b>5 Jun 2026</b></span>
+      <span class="pill">Window <b>Months 7–10</b></span>
+      <span class="pill">Cadence <b>2-week sprints</b></span>
+      <span class="pill">Test suite <b>875 passing</b></span>
+    </div>
+  </header>
+
+  <section class="cards">
+    <div class="card green"><div class="n">4</div><div class="l">Sprints complete</div></div>
+    <div class="card amber"><div class="n">1</div><div class="l">In progress (Sprint 5)</div></div>
+    <div class="card blue"><div class="n">9</div><div class="l">Sprints in plan</div></div>
+    <div class="card"><div class="n">50%</div><div class="l">Phase 2 complete</div></div>
+  </section>
+
+  <div class="progress">
+    <div class="track"><div class="fill" style="width:50%"></div></div>
+    <div class="cap"><span>Sprint 1 · Month 7</span><span><b style="color:var(--ink)">4 done · 1 in progress · 4 to go</b></span><span>Sprint 9 · Verification</span></div>
+  </div>
+
+  <h2 class="sec">Completed sprints</h2>
+
+  <!-- SPRINT 1 -->
+  <div class="sprint done">
+    <div class="head">
+      <div class="num">1</div>
+      <div class="titles">
+        <div class="t">Implementation &amp; Delivery Management foundation</div>
+        <div class="win">Month 7, Weeks 1–2 · merged PR #13</div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>ImplProject / ImplMilestone / ImplBlocker schema</li>
+          <li>New ImplDocument, CustomerSatisfactionPulse, PartnerDeliveryScorecard</li>
+          <li>Full CRUD modules for all entities</li>
+          <li>S3 / MinIO pre-signed upload URLs (15-min)</li>
+          <li>Deal-close hook auto-creates IMPL-XXXXXX</li>
+          <li>Record-level RBAC + audit logging</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Implementations nav entry</li>
+          <li><code>/dashboard/implementations</code> list (DataTable + filters)</li>
+          <li>Implementation detail page with tabbed layout</li>
+          <li>Create-IMPL modal</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Sidebar</span> New "Implementations" nav item</div>
+          <div class="screen"><span class="where">Page</span> /dashboard/implementations list + filters</div>
+          <div class="screen"><span class="where">Page</span> Implementation detail with tabs</div>
+          <div class="screen"><span class="where">Modal</span> "Create Implementation" form</div>
+          <div class="screen"><span class="where">Deals</span> Won deal auto-shows linked IMPL-XXXXXX</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 2 -->
+  <div class="sprint done">
+    <div class="head">
+      <div class="num">2</div>
+      <div class="titles">
+        <div class="t">Health-score engine, CSAT &amp; delivery scorecard</div>
+        <div class="win">Month 7, Weeks 3–4 · merged PR #18</div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Health-score service (40/25/20/15 weights, per-tenant overrides)</li>
+          <li>CSAT pulse trigger at end-of-phase</li>
+          <li>Scorecard aggregation via BullMQ</li>
+          <li>Events: MILESTONE_OVERDUE / BLOCKER_CREATED / HEALTH_SCORE_CHANGED</li>
+          <li>Escalation paths P1–P4</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Milestones tab (6-phase tracker, owner, due-date, criteria)</li>
+          <li>Blockers tab</li>
+          <li>RAG health banner with breakdown</li>
+          <li>Document upload tab + CSAT viewer</li>
+          <li>Partner Delivery Scorecard tab on partner detail</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">IMPL detail</span> RAG health banner + breakdown</div>
+          <div class="screen"><span class="where">IMPL detail</span> Milestones tab (6-phase tracker)</div>
+          <div class="screen"><span class="where">IMPL detail</span> Blockers tab</div>
+          <div class="screen"><span class="where">IMPL detail</span> Documents upload tab</div>
+          <div class="screen"><span class="where">IMPL detail</span> CSAT viewer</div>
+          <div class="screen"><span class="where">Partner detail</span> Delivery Scorecard tab</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 3 -->
+  <div class="sprint done">
+    <div class="head">
+      <div class="num">3</div>
+      <div class="titles">
+        <div class="t">LMS connector, certification &amp; deal-reg gating</div>
+        <div class="win">Month 8, Weeks 1–2 · merged PR #19</div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Course (CRSE-XXXXXX), CourseAssignment, LmsConnectorConfig</li>
+          <li>Certification tracks (levels, prereqs, validity)</li>
+          <li>LMS adapter + Docebo reference connector + manual fallback</li>
+          <li>HMAC webhook <code>/webhooks/lms/:provider</code></li>
+          <li>Vault for LMS credentials</li>
+          <li>Deal-registration cert gating in DealsService</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Admin: LMS Connector config page (provider, URL, schedule, test)</li>
+          <li>Admin: Course catalogue (list + create/edit)</li>
+          <li>Admin: Certification Tracks builder</li>
+          <li>Deal-reg form inline cert error</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Settings</span> LMS Connector config page</div>
+          <div class="screen"><span class="where">Settings</span> Course catalogue (create/edit)</div>
+          <div class="screen"><span class="where">Settings</span> Certification Tracks builder</div>
+          <div class="screen"><span class="where">Register Deal</span> Inline "certification required" error</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 4 -->
+  <div class="sprint done">
+    <div class="head">
+      <div class="num">4</div>
+      <div class="titles">
+        <div class="t">WhatsApp channel, partner learning &amp; competency map</div>
+        <div class="win">Month 8, Weeks 3–4 · merged PR #26</div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Meta Cloud API connector + rate-aware BullMQ send queue</li>
+          <li>Channel selector in notification engine</li>
+          <li>Opt-in/out (STOP reply revokes consent + audit)</li>
+          <li>Delivery / read receipts into comms log</li>
+          <li>Timezone-aware scheduling</li>
+          <li>Column-level encryption on message body</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Partner portal: My Learning (courses, completion %, certs)</li>
+          <li>Cert-expiry banner at 90/60/30 days</li>
+          <li>D3.js Competency Map heatmap on partner detail</li>
+          <li>Admin: WhatsApp config (phone-id, templates, opt-in stats)</li>
+          <li>Contact WhatsApp opt-in toggle + per-contact prefs</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Partner portal</span> "My Learning" (courses + certificates)</div>
+          <div class="screen"><span class="where">Partner portal</span> Cert-expiry banner (90/60/30 days)</div>
+          <div class="screen"><span class="where">Partner detail</span> D3 Competency Map heatmap</div>
+          <div class="screen"><span class="where">Settings</span> WhatsApp config + opt-in stats</div>
+          <div class="screen"><span class="where">Contact</span> WhatsApp opt-in toggle + prefs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="sec">In progress</h2>
+
+  <!-- SPRINT 5 -->
+  <div class="sprint inprog">
+    <div class="head">
+      <div class="num">5</div>
+      <div class="titles">
+        <div class="t">PDM Agent &amp; programme-level currency</div>
+        <div class="win">Month 9, Weeks 1–2 · in review — PR to merge by EOD today</div>
+      </div>
+      <span class="status inprog">In progress</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li class="t-done">PDM Agent: Perceive → Analyse → Decide → Act → Remember <span class="tag t-done">done</span></li>
+          <li class="t-done">Country-Currency mapping + programme defaultCurrency <span class="tag t-done">done</span></li>
+          <li class="t-done">Resolver fallback: txn → partner → programme → country → tenant → USD <span class="tag t-done">done</span></li>
+          <li class="t-done">Per-IMPL memory + LangGraph/Pinecone/LangSmith seams (Phase 3) <span class="tag t-done">done</span></li>
+          <li class="t-todo">Autonomous daily digest + overdue alerts (WhatsApp / email) <span class="tag t-todo">finishing</span></li>
+          <li class="t-todo">Red-status escalation drafts (advisory → PDM queue) <span class="tag t-todo">finishing</span></li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li class="t-done">Admin: Agent Configuration (on/off per tenant + per IMPL) <span class="tag t-done">done</span></li>
+          <li class="t-done">Admin: Country-Currency mapping + Programmes sub-tab <span class="tag t-done">done</span></li>
+          <li class="t-todo">PDM Inbox (digest, overdue alerts, escalation draft cards) <span class="tag t-todo">finishing</span></li>
+          <li class="t-todo">Accept / Edit / Reject actions + Run-digest <span class="tag t-todo">finishing</span></li>
+          <li class="t-todo">Partner onboarding currency picker (flexibility-gated) <span class="tag t-todo">finishing</span></li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Sidebar</span> New "PDM Inbox" nav item</div>
+          <div class="screen"><span class="where">Page</span> PDM Inbox — Accept/Edit/Reject cards</div>
+          <div class="screen"><span class="where">Settings</span> PDM Agent config (advisory / autonomous)</div>
+          <div class="screen"><span class="where">Settings</span> Currencies → Programmes sub-tab</div>
+          <div class="screen"><span class="where">Partner edit</span> Programme + currency picker</div>
+        </div>
+      </div>
+      <p style="margin:14px 0 0; color:var(--muted); font-size:12.5px">
+        <b style="color:var(--prog)">Target:</b> core engine, currency resolver and admin config are merged-ready; PDM Inbox screens and autonomous delivery are being finished — full PR slated to merge by <b style="color:var(--ink)">end of day today</b>.
+      </p>
+    </div>
+  </div>
+
+  <h2 class="sec">Upcoming sprints</h2>
+
+  <!-- SPRINT 6 -->
+  <div class="sprint todo">
+    <div class="head">
+      <div class="num">6</div>
+      <div class="titles">
+        <div class="t">Qualitative tier scoring &amp; Customer Preview</div>
+        <div class="win">Month 9, Weeks 3–4</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Qualitative criteria schema (6 dims, 1–5 scale, versioned)</li>
+          <li>Weighted composite into tier scoring + sub-threshold floors</li>
+          <li>Customer Preview infra (PII masking, 14-day auto-expire)</li>
+          <li>PBM Qualitative Scoring page (6 sliders + history)</li>
+          <li>Tier scoring breakdown drawer (quant + qual)</li>
+          <li>Admin Customer Preview enrolment + feedback dashboard</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user will see</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">PBM</span> Qualitative Scoring page (6 sliders)</div>
+          <div class="screen"><span class="where">Partner detail</span> Tier breakdown drawer (quant + qual)</div>
+          <div class="screen"><span class="where">Settings</span> Customer Preview enrolment page</div>
+          <div class="screen"><span class="where">Staging</span> Preview feedback widget</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 7 -->
+  <div class="sprint todo">
+    <div class="head">
+      <div class="num">7</div>
+      <div class="titles">
+        <div class="t">Full internationalisation (20 languages)</div>
+        <div class="win">Month 10, Weeks 1–2</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>12 new locale catalogues (it, nl, pl, sv, ru, tr, he, ko, zh-TW, hi, id, ms)</li>
+          <li>WhatsApp + SendGrid templates localised per locale</li>
+          <li>ICU plural rules (ru/pl 3-form) + conditional font loading</li>
+          <li>Hebrew RTL &amp; Hindi Devanagari visual QA</li>
+          <li>Currency display for ₪ RTL &amp; Indian numbering</li>
+          <li>Locale picker in partner portal + admin</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user will see</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Global</span> 20-language locale picker (portal + admin)</div>
+          <div class="screen"><span class="where">Global</span> Full UI translated incl. RTL Hebrew/Arabic</div>
+          <div class="screen"><span class="where">Global</span> Localised dates, numbers &amp; currency</div>
+          <div class="screen"><span class="where">Notifications</span> WhatsApp + email in user's language</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 8 -->
+  <div class="sprint todo">
+    <div class="head">
+      <div class="num">8</div>
+      <div class="titles">
+        <div class="t">End-to-end chain, hardening &amp; release</div>
+        <div class="win">Month 10, Weeks 3–4</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Full E2E: deal close → IMPL → PDM digest → WhatsApp → CSAT → tier change</li>
+          <li>Customer Preview dry run (3 pilot enterprise customers, masked)</li>
+          <li>QA Agent suite &gt;85% P1+P2 automation</li>
+          <li>Perf benchmarks (p95 &lt; 300ms at 1k concurrent)</li>
+          <li>WCAG 2.1 AA audit + security review</li>
+          <li>Release notes, runbooks, staged-rollout feature flags</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user will see</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Global</span> Staged rollout behind feature flags</div>
+          <div class="screen"><span class="where">Global</span> Accessibility (WCAG 2.1 AA) fixes</div>
+          <div class="screen"><span class="where">Internal</span> No new screens — stability &amp; polish</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 9 -->
+  <div class="sprint todo">
+    <div class="head">
+      <div class="num">9</div>
+      <div class="titles">
+        <div class="t">Full test &amp; verification pass</div>
+        <div class="win">Post Sprint 8 · Phase 2 sign-off gate</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Test layers</h4>
+        <ul class="tasks">
+          <li>Unit tests — services, resolvers, scoring math (target &gt;85% coverage)</li>
+          <li>Functional / integration tests — every API endpoint &amp; RBAC path</li>
+          <li>E2E tests — Playwright across all critical user journeys</li>
+          <li>Load &amp; stress tests — p95 &lt; 300ms at 1k concurrent users</li>
+          <li>Regression suite — full QA Agent run vs baseline before release</li>
+          <li>Smoke tests — post-deploy health checks on every environment</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Verification &amp; sign-off</h4>
+        <ul class="tasks">
+          <li>Security review (agent RBAC, token expiry, tenant isolation)</li>
+          <li>Accessibility audit (WCAG 2.1 AA) incl. RTL &amp; CJK</li>
+          <li>Cross-browser &amp; responsive QA</li>
+          <li>Data-migration dry run + rollback rehearsal</li>
+          <li>UAT with pilot tenants on staging</li>
+          <li>Go / no-go release checklist signed off</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user will see</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Internal</span> QA dashboard — coverage, runs, release gate</div>
+          <div class="screen"><span class="where">Internal</span> Defect tracker with severity + exceptions</div>
+          <div class="screen"><span class="where">Stakeholders</span> Phase 2 verification report / sign-off</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="sec">After Phase 2 ships — verification &amp; next steps</h2>
+  <div class="sprint todo">
+    <div class="body" style="border-top:none; padding-top:18px">
+      <div class="grp" style="margin-top:0">
+        <h4>To verify after Phase 2 is complete</h4>
+        <ul class="tasks">
+          <li>Production monitoring &amp; alerting live (errors, latency, queues)</li>
+          <li>Real-usage telemetry flowing from new modules (IMPL, PDM, LMS)</li>
+          <li>Tenant onboarding validated on the new feature set</li>
+          <li>Backup &amp; disaster-recovery drill on production data</li>
+          <li>Cost / performance review under real load</li>
+          <li>Stakeholder demo + feedback capture</li>
+          <li>Phase 3 backlog groomed (live LLM, +11 languages, Telegram)</li>
+          <li>Post-Phase-2 design refresh kicked off (separate workstream)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Generated from the engineering delivery log · merged PRs #13, #18, #19, #26 · Sprint 5 PR in review · open <code>docs/phase2-tracker.html</code> in any browser
+  </footer>
+
+</div>
+</body>
+</html>
