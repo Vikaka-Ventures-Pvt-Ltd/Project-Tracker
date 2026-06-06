@@ -40,14 +40,35 @@
   /* progress bar */
   .progress{margin:22px 0 34px}
   .progress .track{height:14px; background:var(--panel); border:1px solid var(--line); border-radius:999px; overflow:hidden; display:flex}
-  .progress .fill{background:linear-gradient(90deg,var(--accent),var(--accent2)); height:100%}
+  .progress .fill{background:linear-gradient(90deg,var(--accent),var(--accent2)); height:100%; width:0; transition:width 1.1s cubic-bezier(.22,1,.36,1)}
   .progress .cap{display:flex; justify-content:space-between; margin-top:8px; color:var(--muted); font-size:12.5px}
+
+  /* toolbar (interactive controls) */
+  .toolbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 8px}
+  .filters{display:flex; gap:6px; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:4px}
+  .filters button{appearance:none; border:0; background:transparent; color:var(--muted); font:inherit; font-size:12.5px; font-weight:600;
+    padding:6px 14px; border-radius:999px; cursor:pointer; transition:background .15s,color .15s}
+  .filters button:hover{color:var(--ink)}
+  .filters button.active{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff}
+  .filters button .c{opacity:.7; font-weight:700; margin-left:5px}
+  .toolbar .spacer{flex:1 1 auto}
+  .ghost{appearance:none; background:var(--panel); border:1px solid var(--line); color:var(--muted); font:inherit; font-size:12.5px; font-weight:600;
+    padding:7px 13px; border-radius:9px; cursor:pointer; transition:color .15s,border-color .15s}
+  .ghost:hover{color:var(--ink); border-color:var(--accent)}
 
   h2.sec{font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin:34px 0 14px; font-weight:700}
 
+  /* filtering: hide whole groups */
+  body[data-filter="done"] .group[data-group="upcoming"]{display:none}
+  body[data-filter="todo"] .group[data-group="completed"]{display:none}
+
   /* sprint */
   .sprint{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:14px; margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden}
-  .sprint .head{display:flex; align-items:center; gap:14px; padding:16px 18px}
+  .sprint .head{display:flex; align-items:center; gap:14px; padding:16px 18px; cursor:pointer; user-select:none}
+  .sprint .head:hover{background:rgba(91,140,255,.05)}
+  .sprint .head:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+  .chevron{flex:0 0 auto; color:var(--faint); transition:transform .2s ease; font-size:13px; width:14px; text-align:center}
+  .sprint.collapsed .chevron{transform:rotate(-90deg)}
   .sprint .num{flex:0 0 auto; width:42px; height:42px; border-radius:11px; display:grid; place-items:center; font-weight:800; font-size:17px; background:#0c1322; border:1px solid var(--line)}
   .sprint.done .num{color:var(--done); border-color:var(--done-line); background:var(--done-bg)}
   .sprint.inprog .num{color:var(--prog); border-color:var(--prog-line); background:var(--prog-bg)}
@@ -60,6 +81,7 @@
   .status.inprog{color:var(--prog); background:var(--prog-bg); border-color:var(--prog-line)}
   .status.todo{color:var(--todo); background:var(--todo-bg); border-color:var(--todo-line)}
   .sprint .body{padding:0 18px 18px; border-top:1px solid var(--line)}
+  .sprint.collapsed .body{display:none}
   .grp{margin-top:16px}
   .grp h4{margin:0 0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
   ul.tasks{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:6px 22px}
@@ -90,48 +112,68 @@
   footer{margin-top:40px; color:var(--faint); font-size:12px; text-align:center}
   footer code{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:2px 7px; color:var(--muted)}
 
+  @media (prefers-reduced-motion:reduce){
+    .progress .fill{transition:none}
+    .chevron{transition:none}
+  }
+
   @media print{
     @page{ size:A4; margin:14mm }
     html,body{ background:var(--bg)!important }
     *{ -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important }
     body{ padding:0 }
+    .toolbar{ display:none }
+    .sprint.collapsed .body{ display:block }
     .sprint, .card, .visible{ break-inside:avoid; page-break-inside:avoid }
     h2.sec{ break-after:avoid }
   }
 </style>
 </head>
-<body>
+<body data-filter="all">
 <div class="wrap">
 
   <header class="top">
     <div class="eyebrow">PartnerOS · Delivery Tracker</div>
     <h1>Phase 2 — Sprint Progress</h1>
-    <p class="sub">End-to-end vertical slices (schema → API → UI → tests) shipped on the existing v1 design system. Each sprint below shows the concrete tasks delivered and the screens users see. Sprints 1–4 are merged; Sprint 5 is in review (PR merging end of day today); Sprints 6–9 are scoped and pending.</p>
+    <p class="sub">End-to-end vertical slices (schema → API → UI → tests) shipped on the existing v1 design system. Each sprint below shows the concrete tasks delivered and the screens users see. Sprints 1–6 are complete; Sprints 7–9 are scoped and pending.</p>
     <div class="meta-row">
-      <span class="pill">Status as of <b>5 Jun 2026</b></span>
+      <span class="pill">Status as of <b>6 Jun 2026</b></span>
       <span class="pill">Window <b>Months 7–10</b></span>
       <span class="pill">Cadence <b>2-week sprints</b></span>
-      <span class="pill">Test suite <b>875 passing</b></span>
+      <span class="pill">Test suite <b>910 passing</b></span>
     </div>
   </header>
 
   <section class="cards">
-    <div class="card green"><div class="n">4</div><div class="l">Sprints complete</div></div>
-    <div class="card amber"><div class="n">1</div><div class="l">In progress (Sprint 5)</div></div>
+    <div class="card green"><div class="n">6</div><div class="l">Sprints complete</div></div>
+    <div class="card amber"><div class="n">7</div><div class="l">Up next (Sprint 7)</div></div>
     <div class="card blue"><div class="n">9</div><div class="l">Sprints in plan</div></div>
-    <div class="card"><div class="n">50%</div><div class="l">Phase 2 complete</div></div>
+    <div class="card"><div class="n">75%</div><div class="l">Phase 2 complete</div></div>
   </section>
 
   <div class="progress">
-    <div class="track"><div class="fill" style="width:50%"></div></div>
-    <div class="cap"><span>Sprint 1 · Month 7</span><span><b style="color:var(--ink)">4 done · 1 in progress · 4 to go</b></span><span>Sprint 9 · Verification</span></div>
+    <div class="track"><div class="fill" data-target="75%"></div></div>
+    <div class="cap"><span>Sprint 1 · Month 7</span><span><b style="color:var(--ink)">6 done · 3 to go</b></span><span>Sprint 9 · Verification</span></div>
   </div>
 
+  <!-- interactive toolbar -->
+  <div class="toolbar" role="region" aria-label="Tracker controls">
+    <div class="filters" role="group" aria-label="Filter sprints">
+      <button data-filter="all" class="active" aria-pressed="true">All<span class="c">9</span></button>
+      <button data-filter="done" aria-pressed="false">Completed<span class="c">6</span></button>
+      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">3</span></button>
+    </div>
+    <span class="spacer"></span>
+    <button class="ghost" id="toggleAll" aria-label="Collapse or expand all sprints">Collapse all</button>
+  </div>
+
+  <div class="group" data-group="completed">
   <h2 class="sec">Completed sprints</h2>
 
   <!-- SPRINT 1 -->
   <div class="sprint done">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">1</div>
       <div class="titles">
         <div class="t">Implementation &amp; Delivery Management foundation</div>
@@ -176,6 +218,7 @@
   <!-- SPRINT 2 -->
   <div class="sprint done">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">2</div>
       <div class="titles">
         <div class="t">Health-score engine, CSAT &amp; delivery scorecard</div>
@@ -221,6 +264,7 @@
   <!-- SPRINT 3 -->
   <div class="sprint done">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">3</div>
       <div class="titles">
         <div class="t">LMS connector, certification &amp; deal-reg gating</div>
@@ -264,6 +308,7 @@
   <!-- SPRINT 4 -->
   <div class="sprint done">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">4</div>
       <div class="titles">
         <div class="t">WhatsApp channel, partner learning &amp; competency map</div>
@@ -306,38 +351,37 @@
     </div>
   </div>
 
-  <h2 class="sec">In progress</h2>
-
   <!-- SPRINT 5 -->
-  <div class="sprint inprog">
+  <div class="sprint done">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">5</div>
       <div class="titles">
         <div class="t">PDM Agent &amp; programme-level currency</div>
-        <div class="win">Month 9, Weeks 1–2 · in review — PR to merge by EOD today</div>
+        <div class="win">Month 9, Weeks 1–2 · merged PR #29</div>
       </div>
-      <span class="status inprog">In progress</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
         <h4>Backend</h4>
         <ul class="tasks">
-          <li class="t-done">PDM Agent: Perceive → Analyse → Decide → Act → Remember <span class="tag t-done">done</span></li>
-          <li class="t-done">Country-Currency mapping + programme defaultCurrency <span class="tag t-done">done</span></li>
-          <li class="t-done">Resolver fallback: txn → partner → programme → country → tenant → USD <span class="tag t-done">done</span></li>
-          <li class="t-done">Per-IMPL memory + LangGraph/Pinecone/LangSmith seams (Phase 3) <span class="tag t-done">done</span></li>
-          <li class="t-todo">Autonomous daily digest + overdue alerts (WhatsApp / email) <span class="tag t-todo">finishing</span></li>
-          <li class="t-todo">Red-status escalation drafts (advisory → PDM queue) <span class="tag t-todo">finishing</span></li>
+          <li>PDM Agent: Perceive → Analyse → Decide → Act → Remember loop</li>
+          <li>Autonomous daily digest + overdue alerts (WhatsApp / email)</li>
+          <li>Red-status escalation drafts (advisory → PDM queue)</li>
+          <li>Per-IMPL memory + LangGraph / Pinecone / LangSmith seams (Phase 3)</li>
+          <li>Programme-level currency + resolver fallback chain</li>
+          <li>txn → partner → programme → country → tenant → USD</li>
         </ul>
       </div>
       <div class="grp">
         <h4>Frontend</h4>
         <ul class="tasks">
-          <li class="t-done">Admin: Agent Configuration (on/off per tenant + per IMPL) <span class="tag t-done">done</span></li>
-          <li class="t-done">Admin: Country-Currency mapping + Programmes sub-tab <span class="tag t-done">done</span></li>
-          <li class="t-todo">PDM Inbox (digest, overdue alerts, escalation draft cards) <span class="tag t-todo">finishing</span></li>
-          <li class="t-todo">Accept / Edit / Reject actions + Run-digest <span class="tag t-todo">finishing</span></li>
-          <li class="t-todo">Partner onboarding currency picker (flexibility-gated) <span class="tag t-todo">finishing</span></li>
+          <li>PDM Inbox (digest, overdue alerts, escalation draft cards)</li>
+          <li>Accept / Edit / Reject actions + Run-digest</li>
+          <li>Admin: Agent Configuration (on/off per tenant + per IMPL)</li>
+          <li>Admin: Currencies → Programmes sub-tab</li>
+          <li>Partner onboarding currency picker (flexibility-gated)</li>
         </ul>
       </div>
       <div class="visible">
@@ -350,51 +394,63 @@
           <div class="screen"><span class="where">Partner edit</span> Programme + currency picker</div>
         </div>
       </div>
-      <p style="margin:14px 0 0; color:var(--muted); font-size:12.5px">
-        <b style="color:var(--prog)">Target:</b> core engine, currency resolver and admin config are merged-ready; PDM Inbox screens and autonomous delivery are being finished — full PR slated to merge by <b style="color:var(--ink)">end of day today</b>.
-      </p>
     </div>
   </div>
 
-  <h2 class="sec">Upcoming sprints</h2>
-
   <!-- SPRINT 6 -->
-  <div class="sprint todo">
+  <div class="sprint done">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">6</div>
       <div class="titles">
         <div class="t">Qualitative tier scoring &amp; Customer Preview</div>
-        <div class="win">Month 9, Weeks 3–4</div>
+        <div class="win">Month 9, Weeks 3–4 · merged PR #30</div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>Backend</h4>
         <ul class="tasks">
           <li>Qualitative criteria schema (6 dims, 1–5 scale, versioned)</li>
-          <li>Weighted composite into tier scoring + sub-threshold floors</li>
-          <li>Customer Preview infra (PII masking, 14-day auto-expire)</li>
-          <li>PBM Qualitative Scoring page (6 sliders + history)</li>
-          <li>Tier scoring breakdown drawer (quant + qual)</li>
-          <li>Admin Customer Preview enrolment + feedback dashboard</li>
+          <li>Qualitative + CSAT criterion types in the tier scoring engine</li>
+          <li>Weighted composite + CSAT sub-threshold floors (≥4.0 Gold)</li>
+          <li>Customer Preview infra (enrolment, 14-day window)</li>
+          <li>PII masking pipeline + post-mask validator</li>
+          <li>Auto-expire on prod deploy + feedback channel API</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>PBM Qualitative Scoring tab (6 sliders + justification + history)</li>
+          <li>Tier scoring breakdown drawer (quant + qual side-by-side)</li>
+          <li>Admin: Customer Preview enrolment page (opt-in + terms)</li>
+          <li>STAGING preview feedback widget (severity / module / repro)</li>
+          <li>QA Manager preview-feedback dashboard tab</li>
         </ul>
       </div>
       <div class="visible">
-        <h4>👁 What the user will see</h4>
+        <h4>👁 What the user sees</h4>
         <div class="screens">
-          <div class="screen"><span class="where">PBM</span> Qualitative Scoring page (6 sliders)</div>
+          <div class="screen"><span class="where">Partner detail</span> Qualitative Scoring tab (6 sliders)</div>
           <div class="screen"><span class="where">Partner detail</span> Tier breakdown drawer (quant + qual)</div>
           <div class="screen"><span class="where">Settings</span> Customer Preview enrolment page</div>
-          <div class="screen"><span class="where">Staging</span> Preview feedback widget</div>
+          <div class="screen"><span class="where">Staging</span> Floating preview-feedback widget</div>
+          <div class="screen"><span class="where">Settings</span> QA Agent → Preview Feedback triage</div>
         </div>
       </div>
     </div>
   </div>
+  </div><!-- /group completed -->
+
+  <div class="group" data-group="upcoming">
+  <h2 class="sec">Upcoming sprints</h2>
 
   <!-- SPRINT 7 -->
   <div class="sprint todo">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">7</div>
       <div class="titles">
         <div class="t">Full internationalisation (20 languages)</div>
@@ -429,6 +485,7 @@
   <!-- SPRINT 8 -->
   <div class="sprint todo">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">8</div>
       <div class="titles">
         <div class="t">End-to-end chain, hardening &amp; release</div>
@@ -462,6 +519,7 @@
   <!-- SPRINT 9 -->
   <div class="sprint todo">
     <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">9</div>
       <div class="titles">
         <div class="t">Full test &amp; verification pass</div>
@@ -521,11 +579,95 @@
       </div>
     </div>
   </div>
+  </div><!-- /group upcoming -->
 
   <footer>
-    Generated from the engineering delivery log · merged PRs #13, #18, #19, #26 · Sprint 5 PR in review · open <code>docs/phase2-tracker.html</code> in any browser
+    Generated from the engineering delivery log · merged PRs #13, #18, #19, #26, #29, #30 · open <code>docs/phase2-tracker.html</code> in any browser
   </footer>
 
 </div>
+
+<script>
+  (function () {
+    var body = document.body;
+
+    // ── Animate the progress bar from 0 → target on load ──
+    var fill = document.querySelector('.progress .fill');
+    if (fill) {
+      var target = fill.getAttribute('data-target') || '0%';
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { fill.style.width = target; });
+      });
+    }
+
+    // ── Filter chips (All / Completed / Upcoming) ──
+    var filterBtns = Array.prototype.slice.call(document.querySelectorAll('.filters button'));
+    filterBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var f = btn.getAttribute('data-filter');
+        body.setAttribute('data-filter', f);
+        filterBtns.forEach(function (b) {
+          var on = b === btn;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      });
+    });
+
+    // ── Collapsible sprints ──
+    var heads = Array.prototype.slice.call(document.querySelectorAll('.sprint .head'));
+    heads.forEach(function (head) {
+      var sprint = head.closest('.sprint');
+      // a11y: make the header behave like a button
+      head.setAttribute('role', 'button');
+      head.setAttribute('tabindex', '0');
+      head.setAttribute('aria-expanded', 'true');
+
+      function toggle() {
+        var collapsed = sprint.classList.toggle('collapsed');
+        head.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        syncToggleAllLabel();
+      }
+      head.addEventListener('click', toggle);
+      head.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
+
+    // ── Expand all / Collapse all ──
+    var toggleAll = document.getElementById('toggleAll');
+    function visibleSprints() {
+      return Array.prototype.slice.call(document.querySelectorAll('.sprint .head'))
+        .filter(function (h) { return h.offsetParent !== null; });
+    }
+    function syncToggleAllLabel() {
+      if (!toggleAll) return;
+      var anyOpen = visibleSprints().some(function (h) {
+        return !h.closest('.sprint').classList.contains('collapsed');
+      });
+      toggleAll.textContent = anyOpen ? 'Collapse all' : 'Expand all';
+    }
+    if (toggleAll) {
+      toggleAll.addEventListener('click', function () {
+        var anyOpen = visibleSprints().some(function (h) {
+          return !h.closest('.sprint').classList.contains('collapsed');
+        });
+        visibleSprints().forEach(function (h) {
+          var s = h.closest('.sprint');
+          s.classList.toggle('collapsed', anyOpen);
+          h.setAttribute('aria-expanded', anyOpen ? 'false' : 'true');
+        });
+        syncToggleAllLabel();
+      });
+    }
+
+    // ── Deep-link support: #done / #todo / #all preselects a filter ──
+    var hash = (location.hash || '').replace('#', '');
+    if (hash === 'done' || hash === 'todo' || hash === 'all') {
+      var preset = document.querySelector('.filters button[data-filter="' + hash + '"]');
+      if (preset) preset.click();
+    }
+  })();
+</script>
 </body>
 </html>
