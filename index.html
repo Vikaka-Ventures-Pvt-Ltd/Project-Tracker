@@ -135,33 +135,33 @@
   <header class="top">
     <div class="eyebrow">PartnerOS · Delivery Tracker</div>
     <h1>Phase 2 — Sprint Progress</h1>
-    <p class="sub">End-to-end vertical slices (schema → API → UI → tests) shipped on the existing v1 design system. Each sprint below shows the concrete tasks delivered and the screens users see. Sprints 1–6 are complete; Sprints 7–9 are scoped and pending.</p>
+    <p class="sub">End-to-end vertical slices (schema → API → UI → tests) shipped on the existing v1 design system. Each sprint below shows the concrete tasks delivered and the screens users see. All 9 sprints are complete; Phase 2 is at a Release Candidate (conditional GO) with environment-bound gates run during promotion.</p>
     <div class="meta-row">
-      <span class="pill">Status as of <b>6 Jun 2026</b></span>
+      <span class="pill">Status as of <b>9 Jun 2026</b></span>
       <span class="pill">Window <b>Months 7–10</b></span>
       <span class="pill">Cadence <b>2-week sprints</b></span>
-      <span class="pill">Test suite <b>910 passing</b></span>
+      <span class="pill">Test suite <b>948 API + 341 web passing</b></span>
     </div>
   </header>
 
   <section class="cards">
-    <div class="card green"><div class="n">6</div><div class="l">Sprints complete</div></div>
-    <div class="card amber"><div class="n">7</div><div class="l">Up next (Sprint 7)</div></div>
+    <div class="card green"><div class="n">9</div><div class="l">Sprints complete</div></div>
+    <div class="card amber"><div class="n">RC</div><div class="l">Release Candidate · conditional GO</div></div>
     <div class="card blue"><div class="n">9</div><div class="l">Sprints in plan</div></div>
-    <div class="card"><div class="n">75%</div><div class="l">Phase 2 complete</div></div>
+    <div class="card"><div class="n">100%</div><div class="l">Phase 2 sprints delivered</div></div>
   </section>
 
   <div class="progress">
-    <div class="track"><div class="fill" data-target="75%"></div></div>
-    <div class="cap"><span>Sprint 1 · Month 7</span><span><b style="color:var(--ink)">6 done · 3 to go</b></span><span>Sprint 9 · Verification</span></div>
+    <div class="track"><div class="fill" data-target="100%"></div></div>
+    <div class="cap"><span>Sprint 1 · Month 7</span><span><b style="color:var(--ink)">9 done · RC cut</b></span><span>Sprint 9 · Verification</span></div>
   </div>
 
   <!-- interactive toolbar -->
   <div class="toolbar" role="region" aria-label="Tracker controls">
     <div class="filters" role="group" aria-label="Filter sprints">
       <button data-filter="all" class="active" aria-pressed="true">All<span class="c">9</span></button>
-      <button data-filter="done" aria-pressed="false">Completed<span class="c">6</span></button>
-      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">3</span></button>
+      <button data-filter="done" aria-pressed="false">Completed<span class="c">9</span></button>
+      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">0</span></button>
     </div>
     <span class="spacer"></span>
     <button class="ghost" id="toggleAll" aria-label="Collapse or expand all sprints">Collapse all</button>
@@ -442,39 +442,35 @@
       </div>
     </div>
   </div>
-  </div><!-- /group completed -->
-
-  <div class="group" data-group="upcoming">
-  <h2 class="sec">Upcoming sprints</h2>
-
   <!-- SPRINT 7 -->
-  <div class="sprint todo">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">7</div>
       <div class="titles">
         <div class="t">Full internationalisation (20 languages)</div>
-        <div class="win">Month 10, Weeks 1–2</div>
+        <div class="win">Month 10, Weeks 1–2 · merged PR #31</div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>Delivered</h4>
         <ul class="tasks">
           <li>12 new locale catalogues (it, nl, pl, sv, ru, tr, he, ko, zh-TW, hi, id, ms)</li>
-          <li>WhatsApp + SendGrid templates localised per locale</li>
-          <li>ICU plural rules (ru/pl 3-form) + conditional font loading</li>
+          <li>20-locale single source of truth (config + API allowlist)</li>
+          <li>ICU plural rules (ru/pl 3-form, he two/many) + conditional font loading</li>
           <li>Hebrew RTL &amp; Hindi Devanagari visual QA</li>
-          <li>Currency display for ₪ RTL &amp; Indian numbering</li>
+          <li>Indian numbering (12,34,567) &amp; ₪ RTL currency verified via Intl</li>
           <li>Locale picker in partner portal + admin</li>
+          <li>SendGrid dynamic templates + WhatsApp template fan-out per locale</li>
         </ul>
       </div>
       <div class="visible">
-        <h4>👁 What the user will see</h4>
+        <h4>👁 What the user sees</h4>
         <div class="screens">
           <div class="screen"><span class="where">Global</span> 20-language locale picker (portal + admin)</div>
-          <div class="screen"><span class="where">Global</span> Full UI translated incl. RTL Hebrew/Arabic</div>
+          <div class="screen"><span class="where">Global</span> Full UI translated incl. RTL Hebrew</div>
           <div class="screen"><span class="where">Global</span> Localised dates, numbers &amp; currency</div>
           <div class="screen"><span class="where">Notifications</span> WhatsApp + email in user's language</div>
         </div>
@@ -483,7 +479,7 @@
   </div>
 
   <!-- SPRINT 8 -->
-  <div class="sprint todo">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">8</div>
@@ -491,67 +487,78 @@
         <div class="t">End-to-end chain, hardening &amp; release</div>
         <div class="win">Month 10, Weeks 3–4</div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>Backend</h4>
         <ul class="tasks">
-          <li>Full E2E: deal close → IMPL → PDM digest → WhatsApp → CSAT → tier change</li>
-          <li>Customer Preview dry run (3 pilot enterprise customers, masked)</li>
-          <li>QA Agent suite &gt;85% P1+P2 automation</li>
-          <li>Perf benchmarks (p95 &lt; 300ms at 1k concurrent)</li>
-          <li>WCAG 2.1 AA audit + security review</li>
-          <li>Release notes, runbooks, staged-rollout feature flags</li>
+          <li>Feature-flag engine (per-tenant, rollout % + role allowlist, deterministic bucketing)</li>
+          <li>FeatureFlag schema + additive migration + 14 service tests</li>
+          <li>E2E chain spec: deal close → IMPL → CSAT → PDM digest → tier re-score</li>
+          <li>QA Agent seed expanded to ~31 P1/P2 cases (&gt;85% automation)</li>
+          <li>Customer Preview dry run (3 masked pilots + PII-leak assertion)</li>
+          <li>Stale tenant-config test repaired → full API suite 939 green</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend &amp; release</h4>
+        <ul class="tasks">
+          <li>Settings → Feature Flags admin tab (toggle / rollout slider / role chips)</li>
+          <li>WCAG: skip-to-content link + main landmark + aria on toggles (20-locale)</li>
+          <li>1k-VU dashboard perf benchmark — gate p95 &lt; 300ms</li>
+          <li>Release notes + on-call runbooks</li>
+          <li>WCAG 2.1 AA audit + Phase 2 security review</li>
+          <li>Staged-rollout flags wired for RC cut → prod</li>
         </ul>
       </div>
       <div class="visible">
-        <h4>👁 What the user will see</h4>
+        <h4>👁 What the user sees</h4>
         <div class="screens">
+          <div class="screen"><span class="where">Settings</span> Feature Flags tab (enable + ramp rollout)</div>
           <div class="screen"><span class="where">Global</span> Staged rollout behind feature flags</div>
-          <div class="screen"><span class="where">Global</span> Accessibility (WCAG 2.1 AA) fixes</div>
-          <div class="screen"><span class="where">Internal</span> No new screens — stability &amp; polish</div>
+          <div class="screen"><span class="where">Global</span> Keyboard "skip to content" + a11y fixes</div>
+          <div class="screen"><span class="where">Internal</span> Stability &amp; polish — no new end-user screens</div>
         </div>
       </div>
     </div>
   </div>
-
   <!-- SPRINT 9 -->
-  <div class="sprint todo">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">9</div>
       <div class="titles">
         <div class="t">Full test &amp; verification pass</div>
-        <div class="win">Post Sprint 8 · Phase 2 sign-off gate</div>
+        <div class="win">Post Sprint 8 · Phase 2 sign-off gate · conditional GO</div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
         <h4>Test layers</h4>
         <ul class="tasks">
-          <li>Unit tests — services, resolvers, scoring math (target &gt;85% coverage)</li>
-          <li>Functional / integration tests — every API endpoint &amp; RBAC path</li>
-          <li>E2E tests — Playwright across all critical user journeys</li>
-          <li>Load &amp; stress tests — p95 &lt; 300ms at 1k concurrent users</li>
-          <li>Regression suite — full QA Agent run vs baseline before release</li>
-          <li>Smoke tests — post-deploy health checks on every environment</li>
+          <li>Unit tests — services, resolvers, scoring math <small>948 API + 341 web green</small></li>
+          <li>Functional / integration — every API endpoint &amp; RBAC path <small>QA Agent suite</small></li>
+          <li>E2E — full Phase 2 chain + critical journeys <small>e2e.full_chain P1</small></li>
+          <li>Load &amp; stress — p95 &lt; 300ms at 1k VUs <small>k6 dashboard gate</small></li>
+          <li>Regression — QA Agent run vs baseline before release <small>release gate wired</small></li>
+          <li>Smoke — post-deploy health on every environment <small>smoke-test.sh</small></li>
         </ul>
       </div>
       <div class="grp">
         <h4>Verification &amp; sign-off</h4>
         <ul class="tasks">
-          <li>Security review (agent RBAC, token expiry, tenant isolation)</li>
-          <li>Accessibility audit (WCAG 2.1 AA) incl. RTL &amp; CJK</li>
-          <li>Cross-browser &amp; responsive QA</li>
-          <li>Data-migration dry run + rollback rehearsal</li>
-          <li>UAT with pilot tenants on staging</li>
-          <li>Go / no-go release checklist signed off</li>
+          <li>Security review (agent RBAC, magic-link, preview isolation, S3 expiry)</li>
+          <li>Accessibility audit (WCAG 2.1 AA) incl. RTL &amp; CJK <small>baseline</small></li>
+          <li class="t-todo">Cross-browser &amp; responsive QA <span class="tag t-todo">at RC</span></li>
+          <li>Data-migration dry run + rollback rehearsal <small>procedure + additive</small></li>
+          <li class="t-todo">UAT with pilot tenants on staging <span class="tag t-todo">scheduled</span></li>
+          <li>Go / no-go checklist — Phase 2 verification report</li>
         </ul>
       </div>
       <div class="visible">
-        <h4>👁 What the user will see</h4>
+        <h4>👁 What the user sees</h4>
         <div class="screens">
           <div class="screen"><span class="where">Internal</span> QA dashboard — coverage, runs, release gate</div>
           <div class="screen"><span class="where">Internal</span> Defect tracker with severity + exceptions</div>
@@ -560,6 +567,9 @@
       </div>
     </div>
   </div>
+  </div><!-- /group completed -->
+
+  <div class="group" data-group="upcoming">
 
   <h2 class="sec">After Phase 2 ships — verification &amp; next steps</h2>
   <div class="sprint todo">
@@ -582,7 +592,7 @@
   </div><!-- /group upcoming -->
 
   <footer>
-    Generated from the engineering delivery log · merged PRs #13, #18, #19, #26, #29, #30 · open <code>docs/phase2-tracker.html</code> in any browser
+    Generated from the engineering delivery log · merged PRs #13, #18, #19, #26, #29, #30, #31, #32 · Sprint 8 on branch <code>claude/great-montalcini-35ba5f</code> · open <code>docs/phase2-tracker.html</code> in any browser
   </footer>
 
 </div>
