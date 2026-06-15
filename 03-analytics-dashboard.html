@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1512, initial-scale=1">
+<title>P2P Connect — Dashboard · Analytics Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --p2p-blue:#2563EB; --p2p-blue-deep:#11447D; --p2p-magenta:#C13D89; --p2p-magenta-deep:#9D2B6C;
+    --p2p-purple:#7C3AED; --p2p-teal:#14B8A6;
+    --ink:#0F172A; --ink-2:#334155; --ink-3:#64748B; --bg:#F5F7FB; --card:#FFFFFF;
+    --border:#E6EAF2; --border-soft:#EEF1F7;
+    --grad:linear-gradient(135deg,#2563EB 0%,#7C3AED 55%,#C13D89 100%);
+    --gold:#D9A211; --gold-tint:#FBF3DC; --plat:#7C3AED; --plat-tint:#EFE9FE;
+    --silver:#64748B; --silver-tint:#EEF1F6; --reg:#2563EB; --reg-tint:#E5ECFE;
+    --green:#16A34A; --green-tint:#DCFCE7; --amber:#D97706; --amber-tint:#FEF0D9;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+    --shadow-md:0 1px 2px rgba(15,23,42,.04), 0 4px 12px rgba(15,23,42,.06), 0 12px 28px rgba(15,23,42,.05);
+    --shadow-lg:0 2px 6px rgba(15,23,42,.05), 0 18px 40px rgba(15,23,42,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:13px; line-height:1.45;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1, "ss01" 1;}
+  .app{display:flex; min-height:100vh; width:100%;}
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:256px; flex:0 0 256px; position:sticky; top:0; height:100vh;
+    background:#fff; border-right:1px solid var(--border);
+    display:flex; flex-direction:column; padding:16px 14px; gap:4px;
+    z-index:5;
+  }
+  .brand{
+    display:flex; align-items:center; gap:11px; padding:8px 8px 14px 8px;
+    border-bottom:1px solid var(--border-soft); margin-bottom:10px; position:relative;
+  }
+  .brand .lock{display:flex; flex-direction:column; gap:1px; min-width:0;}
+  .brand .l1{font-weight:700; font-size:15px; color:var(--ink); letter-spacing:-.01em;}
+  .brand .l2{font-size:10px; color:var(--ink-3); letter-spacing:.09em; text-transform:uppercase; font-weight:600;}
+  .wl-pill{
+    position:absolute; top:6px; right:4px; font-size:8.5px; font-weight:700; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--p2p-purple); background:var(--plat-tint);
+    border:1px solid #E0D6FB; padding:2px 6px; border-radius:999px;
+  }
+  .nav-label{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); padding:8px 10px 4px;}
+  .nav{display:flex; flex-direction:column; gap:2px;}
+  .nav a{
+    display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:9px;
+    color:var(--ink-2); text-decoration:none; font-weight:500; font-size:13px; position:relative;
+    transition:background .12s, color .12s;
+  }
+  .nav a svg{width:18px; height:18px; flex:0 0 18px; color:var(--ink-3);}
+  .nav a:hover{background:var(--border-soft); color:var(--ink);}
+  .nav a.active{background:linear-gradient(135deg,rgba(37,99,235,.10),rgba(193,61,137,.08)); color:var(--ink); font-weight:700;}
+  .nav a.active svg{color:var(--p2p-blue);}
+  .nav a.active::before{
+    content:""; position:absolute; left:-14px; top:50%; transform:translateY(-50%);
+    width:3px; height:22px; border-radius:0 3px 3px 0; background:var(--grad);
+  }
+  .nav .badge{margin-left:auto; font-size:10px; font-weight:700; color:#fff; background:var(--p2p-magenta); border-radius:999px; padding:1px 7px; min-width:18px; text-align:center;}
+  .side-spacer{flex:1 1 auto;}
+  .side-foot{border-top:1px solid var(--border-soft); padding-top:10px; display:flex; flex-direction:column; gap:8px;}
+  .lang-sel{
+    display:flex; align-items:center; gap:9px; padding:8px 10px; border:1px solid var(--border);
+    border-radius:9px; font-weight:600; color:var(--ink-2); cursor:pointer; font-size:12.5px;
+  }
+  .lang-sel svg{width:16px; height:16px; color:var(--ink-3);}
+  .lang-sel .chev{margin-left:auto;}
+  .side-row{display:flex; align-items:center; gap:9px; padding:6px 10px; font-size:12.5px; color:var(--ink-2); font-weight:500;}
+  .side-row .dot{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px var(--green-tint);}
+  .side-row.signout{color:var(--ink-3); cursor:pointer;}
+  .side-row.signout svg{width:16px; height:16px;}
+  .side-row.signout:hover{color:var(--p2p-magenta-deep);}
+  .user-chip{
+    display:flex; align-items:center; gap:10px; padding:9px 10px; border:1px solid var(--border);
+    border-radius:11px; background:linear-gradient(180deg,#fff,#FCFDFF); box-shadow:var(--shadow-sm); margin-top:2px;
+  }
+  .avatar{
+    width:34px; height:34px; flex:0 0 34px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:12px; color:#fff; background:var(--grad); letter-spacing:.02em;
+  }
+  .user-chip .meta{display:flex; flex-direction:column; min-width:0; gap:1px;}
+  .user-chip .nm{font-weight:700; font-size:12.5px; color:var(--ink);}
+  .role-badge{font-size:9.5px; font-weight:700; letter-spacing:.03em; color:var(--p2p-blue-deep); background:var(--reg-tint); border:1px solid #D5E1FD; border-radius:6px; padding:1px 6px; width:fit-content;}
+
+  /* ============ MAIN ============ */
+  .main{flex:1 1 auto; min-width:0; display:flex; flex-direction:column;}
+  .topbar{
+    position:sticky; top:0; z-index:4; background:rgba(245,247,251,.86); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border); padding:11px 24px; display:flex; align-items:center; gap:16px;
+  }
+  .crumb{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--ink-3); font-weight:500;}
+  .crumb b{color:var(--ink); font-weight:700;}
+  .crumb svg{width:13px; height:13px;}
+  .topbar .search{
+    margin-left:auto; display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--border);
+    border-radius:9px; padding:7px 11px; width:280px; box-shadow:var(--shadow-sm);
+  }
+  .topbar .search svg{width:15px; height:15px; color:var(--ink-3);}
+  .topbar .search input{border:0; outline:0; font:inherit; font-size:12.5px; width:100%; color:var(--ink); background:transparent;}
+  .topbar .search kbd{font-size:10px; font-weight:600; color:var(--ink-3); border:1px solid var(--border); border-radius:5px; padding:1px 5px; background:var(--bg);}
+  .icon-btn{
+    width:36px; height:36px; border-radius:9px; border:1px solid var(--border); background:#fff; box-shadow:var(--shadow-sm);
+    display:flex; align-items:center; justify-content:center; color:var(--ink-2); cursor:pointer; position:relative;
+  }
+  .icon-btn svg{width:17px; height:17px;}
+  .icon-btn .ind{position:absolute; top:8px; right:9px; width:7px; height:7px; border-radius:50%; background:var(--p2p-magenta); border:1.5px solid #fff;}
+
+  .content{padding:20px 24px 28px; display:flex; flex-direction:column; gap:16px;}
+
+  /* greeting + status strip */
+  .greet-row{display:flex; align-items:flex-end; justify-content:space-between; gap:16px;}
+  .greet h1{margin:0; font-size:23px; font-weight:800; letter-spacing:-.02em; color:var(--ink);}
+  .greet p{margin:3px 0 0; color:var(--ink-3); font-size:13px;}
+  .status-strip{
+    display:inline-flex; align-items:center; gap:10px; background:var(--green-tint); border:1px solid #BBF0CC;
+    color:#15803D; font-weight:600; font-size:12px; padding:8px 13px; border-radius:10px; white-space:nowrap;
+  }
+  .status-strip .pulse{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px rgba(22,163,74,.18);}
+  .status-strip .sep{color:#86C99B;}
+  .qa{display:flex; gap:9px;}
+  .btn{
+    display:inline-flex; align-items:center; gap:7px; font:inherit; font-weight:600; font-size:12.5px;
+    padding:9px 14px; border-radius:9px; cursor:pointer; border:1px solid transparent; white-space:nowrap;
+  }
+  .btn svg{width:15px; height:15px;}
+  .btn-primary{background:var(--grad); color:#fff; box-shadow:0 4px 12px rgba(124,58,237,.28); border:0;}
+  .btn-primary:hover{filter:brightness(1.05);}
+  .btn-secondary{background:#fff; color:var(--ink); border:1px solid var(--border); box-shadow:var(--shadow-sm);}
+  .btn-secondary:hover{background:var(--border-soft);}
+
+  /* KPI strip — 8 up */
+  .kpi-grid{display:grid; grid-template-columns:repeat(8,1fr); gap:12px;}
+  .kpi{
+    background:var(--card); border:1px solid var(--border); border-radius:13px; padding:13px 13px 11px;
+    box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:8px; position:relative; overflow:hidden;
+  }
+  .kpi::after{content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--grad); opacity:0; transition:opacity .15s;}
+  .kpi:hover::after{opacity:.9;}
+  .kpi .top{display:flex; align-items:center; gap:8px;}
+  .kpi .ic{width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex:0 0 28px;}
+  .kpi .ic svg{width:15px; height:15px;}
+  .kpi .lab{font-size:10.5px; font-weight:600; color:var(--ink-3); letter-spacing:.01em; line-height:1.25;}
+  .kpi .val{font-size:22px; font-weight:800; letter-spacing:-.02em; color:var(--ink); line-height:1;}
+  .kpi .sub{font-size:10.5px; color:var(--ink-3); font-weight:500;}
+  .kpi .botrow{display:flex; align-items:flex-end; justify-content:space-between; gap:6px; margin-top:auto;}
+  .trend{display:inline-flex; align-items:center; gap:3px; font-size:10.5px; font-weight:700; padding:2px 6px; border-radius:6px;}
+  .trend svg{width:11px; height:11px;}
+  .trend.up{color:var(--green); background:var(--green-tint);}
+  .trend.flat{color:var(--ink-3); background:var(--silver-tint);}
+  .ic.blue{background:var(--reg-tint); color:var(--p2p-blue);}
+  .ic.mag{background:#FBE7F2; color:var(--p2p-magenta);}
+  .ic.gold{background:var(--gold-tint); color:var(--gold);}
+  .ic.teal{background:#D6F5F0; color:var(--p2p-teal);}
+  .ic.purple{background:var(--plat-tint); color:var(--p2p-purple);}
+  .ic.green{background:var(--green-tint); color:var(--green);}
+  .spark{display:block; width:100%; height:24px;}
+
+  /* main analytics row */
+  .row{display:grid; gap:16px;}
+  .row.r1{grid-template-columns:1fr 360px;}
+  .row.r2{grid-template-columns:1.5fr 1fr;}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow-md); display:flex; flex-direction:column; overflow:hidden;}
+  .panel-head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px 12px;}
+  .panel-head .tt{display:flex; flex-direction:column; gap:2px;}
+  .panel-head h2{margin:0; font-size:14.5px; font-weight:700; letter-spacing:-.01em; color:var(--ink);}
+  .panel-head .desc{font-size:11px; color:var(--ink-3); font-weight:500;}
+  .viewall{font-size:12px; font-weight:600; color:var(--p2p-blue); text-decoration:none; display:inline-flex; align-items:center; gap:3px;}
+  .viewall:hover{color:var(--p2p-blue-deep);}
+  .panel-body{padding:0 16px 16px;}
+
+  .chip-toggle{display:flex; gap:4px; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:3px;}
+  .chip-toggle span{font-size:11px; font-weight:600; color:var(--ink-3); padding:4px 9px; border-radius:6px; cursor:pointer;}
+  .chip-toggle span.on{background:#fff; color:var(--ink); box-shadow:var(--shadow-sm);}
+
+  /* chart legend dots */
+  .legend{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+  .legend .li{display:flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--ink-2);}
+  .legend .sw{width:10px; height:10px; border-radius:3px;}
+  .legend .sw.line{height:3px; width:16px; border-radius:2px;}
+
+  /* donut */
+  .donut-wrap{display:flex; align-items:center; gap:18px; padding:4px 2px 2px;}
+  .donut-legend{display:flex; flex-direction:column; gap:9px; flex:1;}
+  .dl-row{display:flex; align-items:center; gap:9px; font-size:12px;}
+  .dl-row .sw{width:11px; height:11px; border-radius:4px; flex:0 0 11px;}
+  .dl-row .nm{font-weight:600; color:var(--ink-2);}
+  .dl-row .ct{margin-left:auto; font-weight:700; color:var(--ink);}
+  .dl-row .pc{color:var(--ink-3); font-weight:600; width:38px; text-align:right;}
+
+  /* recent deals table */
+  table{width:100%; border-collapse:collapse;}
+  .dt thead th{
+    text-align:left; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-3); padding:7px 10px; border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  .dt thead th.r{text-align:right;}
+  .dt tbody td{padding:9px 10px; border-bottom:1px solid var(--border-soft); font-size:12.5px; vertical-align:middle;}
+  .dt tbody tr:last-child td{border-bottom:0;}
+  .dt tbody tr:hover{background:#FAFBFE;}
+  .dt .cust{font-weight:700; color:var(--ink);}
+  .dt .meta{font-size:11px; color:var(--ink-3); font-variant-numeric:tabular-nums;}
+  .dt .val{text-align:right; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .deal-av{width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; color:#fff;}
+  .cell-flex{display:flex; align-items:center; gap:10px;}
+  .badge{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; letter-spacing:.02em; padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  .badge .bd{width:6px; height:6px; border-radius:50%;}
+  .badge.won{color:#15803D; background:var(--green-tint);}
+  .badge.won .bd{background:var(--green);}
+  .badge.reg{color:var(--p2p-blue-deep); background:var(--reg-tint);}
+  .badge.reg .bd{background:var(--p2p-blue);}
+
+  /* partners by tier compact block */
+  .tier-block{display:flex; flex-direction:column; gap:11px; padding:2px;}
+  .tier-row{display:grid; grid-template-columns:78px 1fr 30px; align-items:center; gap:11px;}
+  .tier-row .tname{font-size:12px; font-weight:600; color:var(--ink-2); display:flex; align-items:center; gap:7px;}
+  .tier-row .tname .pip{width:9px; height:9px; border-radius:3px;}
+  .tier-bar-track{height:9px; border-radius:6px; background:var(--border-soft); overflow:hidden;}
+  .tier-bar-fill{display:block; height:100%; border-radius:6px;}
+  .tier-row .tct{font-size:12.5px; font-weight:700; color:var(--ink); text-align:right;}
+
+  /* mini metrics inline (win rate gauge etc) */
+  .stat-tiles{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
+  .stat-tile{border:1px solid var(--border-soft); border-radius:10px; padding:10px 11px; background:#FBFCFE; display:flex; align-items:center; gap:11px;}
+  .stat-tile .stl{font-size:10.5px; color:var(--ink-3); font-weight:600;}
+  .stat-tile .sv{font-size:17px; font-weight:800; color:var(--ink); letter-spacing:-.01em;}
+
+  /* footer info banner */
+  .info-banner{
+    display:flex; align-items:center; gap:11px; background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(193,61,137,.05));
+    border:1px solid #DCE5F8; border-radius:12px; padding:12px 15px; font-size:12.5px; color:var(--ink-2); font-weight:500;
+  }
+  .info-banner svg{width:18px; height:18px; color:var(--p2p-purple); flex:0 0 18px;}
+  .info-banner b{color:var(--ink); font-weight:700;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="P2P Connect logo">
+        <defs><linearGradient id="p2pg" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#2563EB"/><stop offset="0.55" stop-color="#7C3AED"/><stop offset="1" stop-color="#C13D89"/>
+        </linearGradient></defs>
+        <circle cx="24" cy="24" r="21" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="13.5" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="5.5" fill="url(#p2pg)"/>
+        <circle cx="45" cy="24" r="2.6" fill="#C13D89"/><circle cx="3" cy="24" r="2.6" fill="#2563EB"/>
+      </svg>
+      <div class="lock">
+        <span class="l1">P2P Connect</span>
+        <span class="l2">Enabling Partnerships</span>
+      </div>
+      <span class="wl-pill" title="Each ISV tenant re-skins this brand zone with their own logo + name; the rest of the product stays identical.">White-label</span>
+    </div>
+
+    <div class="nav-label">Operations</div>
+    <nav class="nav">
+      <a class="active" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Applications
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Partners
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/></svg>
+        Deals
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/></svg>
+        Implementations
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M22 7l-10 6L2 7"/></svg>
+        PDM Inbox
+        <span class="badge">3</span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="side-spacer"></div>
+
+    <div class="side-foot">
+      <div class="lang-sel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
+        English
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="side-row"><span class="dot"></span> API connected</div>
+      <div class="side-row signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        Sign out
+      </div>
+      <div class="user-chip">
+        <div class="avatar">PA</div>
+        <div class="meta">
+          <span class="nm">Platform Admin</span>
+          <span class="role-badge">Super Admin</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        <span>P2P Connect</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        <b>Dashboard</b>
+      </div>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input placeholder="Search partners, deals, configs…">
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="icon-btn" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="ind"></span>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 2.5"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- greeting + status + quick actions -->
+      <div class="greet-row">
+        <div class="greet">
+          <h1>Good evening, Platform 👋</h1>
+          <p>Here's what's happening in your partner ecosystem today.</p>
+        </div>
+        <div class="qa">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Register Deal
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add Partner
+          </button>
+        </div>
+      </div>
+
+      <div class="status-strip">
+        <span class="pulse"></span>
+        All systems operational
+        <span class="sep">—</span> API ✓ <span class="sep">·</span> DB ✓ <span class="sep">·</span> Redis ✓
+      </div>
+
+      <!-- KPI STRIP — 8 up -->
+      <div class="kpi-grid">
+        <!-- 1 Total Partners -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+            <span class="lab">Total Partners</span>
+          </div>
+          <div class="val num">49</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><defs><linearGradient id="sp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2563EB" stop-opacity=".22"/><stop offset="1" stop-color="#2563EB" stop-opacity="0"/></linearGradient></defs><path d="M0,18 L17,17 L34,15 L51,16 L68,12 L85,10 L102,8 L120,5 L120,24 L0,24 Z" fill="url(#sp1)"/><path d="M0,18 L17,17 L34,15 L51,16 L68,12 L85,10 L102,8 L120,5" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="botrow"><span class="sub">48 active</span><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 19V5"/></svg>6%</span></div>
+        </div>
+        <!-- 2 Open Deals -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic mag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span>
+            <span class="lab">Open Deals</span>
+          </div>
+          <div class="val num">7</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><path d="M0,16 L17,18 L34,14 L51,15 L68,11 L85,13 L102,9 L120,8" fill="none" stroke="#C13D89" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,16 L17,18 L34,14 L51,15 L68,11 L85,13 L102,9 L120,8 L120,24 L0,24 Z" fill="#C13D89" fill-opacity=".10"/></svg>
+          <div class="botrow"><span class="sub">In review</span><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 19V5"/></svg>2</span></div>
+        </div>
+        <!-- 3 Gold Partners -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></span>
+            <span class="lab">Gold Partners</span>
+          </div>
+          <div class="val num">20</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><path d="M0,17 L17,15 L34,16 L51,12 L68,13 L85,9 L102,8 L120,6" fill="none" stroke="#D9A211" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,17 L17,15 L34,16 L51,12 L68,13 L85,9 L102,8 L120,6 L120,24 L0,24 Z" fill="#D9A211" fill-opacity=".12"/></svg>
+          <div class="botrow"><span class="sub">Top performing</span><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 19V5"/></svg>3</span></div>
+        </div>
+        <!-- 4 Numbering Configs -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l1.9 1.3 2.3-.2 1 2.1 2 1.1-.2 2.3 1.3 1.9-1.3 1.9.2 2.3-2 1.1-1 2.1-2.3-.2L12 21l-1.9-1.3-2.3.2-1-2.1-2-1.1.2-2.3L3.7 12 5 10.1 4.8 7.8l2-1.1 1-2.1 2.3.2z"/></svg></span>
+            <span class="lab">Numbering Configs</span>
+          </div>
+          <div class="val num">8</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><path d="M0,18 L17,18 L34,16 L51,16 L68,13 L85,13 L102,10 L120,10" fill="none" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,18 L17,18 L34,16 L51,16 L68,13 L85,13 L102,10 L120,10 L120,24 L0,24 Z" fill="#14B8A6" fill-opacity=".10"/></svg>
+          <div class="botrow"><span class="sub">Entity types</span><span class="trend flat">stable</span></div>
+        </div>
+        <!-- 5 Pipeline Value -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            <span class="lab">Pipeline Value</span>
+          </div>
+          <div class="val num">$1.24M</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><path d="M0,19 L17,16 L34,17 L51,13 L68,11 L85,9 L102,7 L120,4" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,19 L17,16 L34,17 L51,13 L68,11 L85,9 L102,7 L120,4 L120,24 L0,24 Z" fill="#16A34A" fill-opacity=".12"/></svg>
+          <div class="botrow"><span class="sub">Weighted</span><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 19V5"/></svg>12%</span></div>
+        </div>
+        <!-- 6 Win Rate -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5h4M18 9h2a2 2 0 0 0 2-2V5h-4"/><path d="M6 3h12v6a6 6 0 0 1-12 0z"/><path d="M9 21h6M12 15v6"/></svg></span>
+            <span class="lab">Win Rate</span>
+          </div>
+          <div class="val num">68%</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><path d="M0,14 L17,15 L34,12 L51,13 L68,11 L85,10 L102,11 L120,9" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,14 L17,15 L34,12 L51,13 L68,11 L85,10 L102,11 L120,9 L120,24 L0,24 Z" fill="#7C3AED" fill-opacity=".10"/></svg>
+          <div class="botrow"><span class="sub">L90D won</span><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 19V5"/></svg>4%</span></div>
+        </div>
+        <!-- 7 Avg Health -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+            <span class="lab">Avg Health</span>
+          </div>
+          <div class="val num">82</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><path d="M0,15 L12,16 L24,11 L36,13 L48,9 L60,16 L72,11 L84,13 L96,10 L108,12 L120,8" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="botrow"><span class="sub">Score / 100</span><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 19V5"/></svg>1.5</span></div>
+        </div>
+        <!-- 8 Active Implementations -->
+        <div class="kpi">
+          <div class="top">
+            <span class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/></svg></span>
+            <span class="lab">Active Impl.</span>
+          </div>
+          <div class="val num">12</div>
+          <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><path d="M0,17 L17,16 L34,17 L51,14 L68,15 L85,12 L102,12 L120,10" fill="none" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,17 L17,16 L34,17 L51,14 L68,15 L85,12 L102,12 L120,10 L120,24 L0,24 Z" fill="#14B8A6" fill-opacity=".10"/></svg>
+          <div class="botrow"><span class="sub">In delivery</span><span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l7-7 7 7M12 19V5"/></svg>2</span></div>
+        </div>
+      </div>
+
+      <!-- ROW: Deals & Pipeline chart + Tier donut -->
+      <div class="row r1">
+        <!-- Deals & Pipeline area/line chart -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="tt">
+              <h2>Deals &amp; Pipeline</h2>
+              <span class="desc">Closed-won value vs. pipeline created — last 8 months</span>
+            </div>
+            <div class="chip-toggle">
+              <span class="on">8M</span><span>YTD</span><span>12M</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="legend" style="margin:2px 0 8px;">
+              <span class="li"><span class="sw line" style="background:#2563EB;"></span>Closed-won ($K)</span>
+              <span class="li"><span class="sw line" style="background:#C13D89;"></span>Pipeline created ($K)</span>
+            </div>
+            <!-- CHART -->
+            <svg viewBox="0 0 720 248" width="100%" style="display:block" preserveAspectRatio="none" font-family="Inter">
+              <defs>
+                <linearGradient id="areaWon" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#2563EB" stop-opacity=".26"/>
+                  <stop offset="1" stop-color="#2563EB" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- gridlines + y ticks -->
+              <g stroke="#EEF1F7" stroke-width="1">
+                <line x1="52" y1="24"  x2="708" y2="24"/>
+                <line x1="52" y1="66"  x2="708" y2="66"/>
+                <line x1="52" y1="108" x2="708" y2="108"/>
+                <line x1="52" y1="150" x2="708" y2="150"/>
+                <line x1="52" y1="192" x2="708" y2="192"/>
+              </g>
+              <g font-size="10" fill="#94A3B8" font-weight="600" text-anchor="end" font-family="Inter">
+                <text x="44" y="28">$200K</text>
+                <text x="44" y="70">$150K</text>
+                <text x="44" y="112">$100K</text>
+                <text x="44" y="154">$50K</text>
+                <text x="44" y="196">$0</text>
+              </g>
+              <!-- area under closed-won line -->
+              <path d="M52,168 L145,150 L238,158 L331,120 L424,128 L517,96 L610,78 L708,52 L708,192 L52,192 Z" fill="url(#areaWon)"/>
+              <!-- pipeline created (magenta, dashed-ish) -->
+              <path d="M52,140 L145,128 L238,132 L331,98 L424,104 L517,72 L610,60 L708,40" fill="none" stroke="#C13D89" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".9"/>
+              <!-- closed-won line -->
+              <path d="M52,168 L145,150 L238,158 L331,120 L424,128 L517,96 L610,78 L708,52" fill="none" stroke="#2563EB" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- labelled points on closed-won -->
+              <g>
+                <circle cx="52"  cy="168" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2.2"/>
+                <circle cx="145" cy="150" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2.2"/>
+                <circle cx="238" cy="158" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2.2"/>
+                <circle cx="331" cy="120" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2.2"/>
+                <circle cx="424" cy="128" r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2.2"/>
+                <circle cx="517" cy="96"  r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2.2"/>
+                <circle cx="610" cy="78"  r="3.5" fill="#fff" stroke="#2563EB" stroke-width="2.2"/>
+                <circle cx="708" cy="52"  r="4.5" fill="#2563EB" stroke="#fff" stroke-width="2"/>
+              </g>
+              <!-- highlight callout on last point -->
+              <g font-family="Inter">
+                <rect x="640" y="22" width="66" height="22" rx="6" fill="#0F172A"/>
+                <text x="673" y="37" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">$176K</text>
+              </g>
+              <!-- x labels -->
+              <g font-size="10" fill="#94A3B8" font-weight="600" text-anchor="middle" font-family="Inter">
+                <text x="52"  y="212">Nov</text>
+                <text x="145" y="212">Dec</text>
+                <text x="238" y="212">Jan</text>
+                <text x="331" y="212">Feb</text>
+                <text x="424" y="212">Mar</text>
+                <text x="517" y="212">Apr</text>
+                <text x="610" y="212">May</text>
+                <text x="708" y="212">Jun</text>
+              </g>
+            </svg>
+            <div class="stat-tiles">
+              <div class="stat-tile">
+                <span class="ic green" style="width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>
+                <div><div class="stl">Closed-won (8M)</div><div class="sv num">$844K</div></div>
+              </div>
+              <div class="stat-tile">
+                <span class="ic mag" style="width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M3 3v18h18"/><path d="M19 9l-5 5-4-4-3 3"/></svg></span>
+                <div><div class="stl">Pipeline created</div><div class="sv num">$1.24M</div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tier mix donut -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="tt">
+              <h2>Partner Tier Mix</h2>
+              <span class="desc">Distribution across 49 partners</span>
+            </div>
+            <a class="viewall" href="#">View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+          <div class="panel-body">
+            <div class="donut-wrap">
+              <!-- DONUT: Gold 20 / Platinum 10 / Silver 18 / Registered 1 = 49 total. circumference at r=52 ≈ 326.7 -->
+              <svg width="150" height="150" viewBox="0 0 150 150">
+                <g transform="rotate(-90 75 75)">
+                  <circle cx="75" cy="75" r="52" fill="none" stroke="#EEF1F7" stroke-width="20"/>
+                  <!-- Gold 20/49 -> 133.3 -->
+                  <circle cx="75" cy="75" r="52" fill="none" stroke="#D9A211" stroke-width="20" stroke-dasharray="133.3 193.4" stroke-dashoffset="0"/>
+                  <!-- Platinum 10/49 -> 66.7 -->
+                  <circle cx="75" cy="75" r="52" fill="none" stroke="#7C3AED" stroke-width="20" stroke-dasharray="66.7 260.0" stroke-dashoffset="-133.3"/>
+                  <!-- Silver 18/49 -> 120.0 -->
+                  <circle cx="75" cy="75" r="52" fill="none" stroke="#64748B" stroke-width="20" stroke-dasharray="120.0 206.7" stroke-dashoffset="-200.0"/>
+                  <!-- Registered 1/49 -> 6.7 -->
+                  <circle cx="75" cy="75" r="52" fill="none" stroke="#2563EB" stroke-width="20" stroke-dasharray="6.7 320.0" stroke-dashoffset="-320.0"/>
+                </g>
+                <text x="75" y="70" text-anchor="middle" font-size="28" font-weight="800" fill="#0F172A" font-family="Inter" style="font-variant-numeric:tabular-nums">49</text>
+                <text x="75" y="88" text-anchor="middle" font-size="10.5" font-weight="600" fill="#64748B" font-family="Inter" letter-spacing=".04em">PARTNERS</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="dl-row"><span class="sw" style="background:#D9A211;"></span><span class="nm">Gold</span><span class="ct num">20</span><span class="pc num">41%</span></div>
+                <div class="dl-row"><span class="sw" style="background:#7C3AED;"></span><span class="nm">Platinum</span><span class="ct num">10</span><span class="pc num">20%</span></div>
+                <div class="dl-row"><span class="sw" style="background:#64748B;"></span><span class="nm">Silver</span><span class="ct num">18</span><span class="pc num">37%</span></div>
+                <div class="dl-row"><span class="sw" style="background:#2563EB;"></span><span class="nm">Registered</span><span class="ct num">1</span><span class="pc num">2%</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ROW: Recent Deals dense table + Partners by Tier -->
+      <div class="row r2">
+        <!-- Recent Deals -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="tt">
+              <h2>Recent Deals</h2>
+              <span class="desc">Latest registrations and closures across all partners</span>
+            </div>
+            <a class="viewall" href="#">View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+          <div class="panel-body" style="padding-top:2px;">
+            <table class="dt">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Deal · Partner</th>
+                  <th>Status</th>
+                  <th class="r">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="cell-flex"><span class="deal-av" style="background:linear-gradient(135deg,#2563EB,#7C3AED);">CL</span><span class="cust">Consto LTD</span></div></td>
+                  <td class="meta">DEAL-000007 · Apex Solutions</td>
+                  <td><span class="badge won"><span class="bd"></span>WON</span></td>
+                  <td class="val">$48,000</td>
+                </tr>
+                <tr>
+                  <td><div class="cell-flex"><span class="deal-av" style="background:linear-gradient(135deg,#7C3AED,#C13D89);">HM</span><span class="cust">Helios Manufacturing</span></div></td>
+                  <td class="meta">DEAL-000006 · BlueOrbit Technologies</td>
+                  <td><span class="badge won"><span class="bd"></span>WON</span></td>
+                  <td class="val">$72,500</td>
+                </tr>
+                <tr>
+                  <td><div class="cell-flex"><span class="deal-av" style="background:linear-gradient(135deg,#14B8A6,#2563EB);">OR</span><span class="cust">Orion Retail Group</span></div></td>
+                  <td class="meta">DEAL-000005 · Meridian Cloud</td>
+                  <td><span class="badge reg"><span class="bd"></span>REGISTERED</span></td>
+                  <td class="val">$31,000</td>
+                </tr>
+                <tr>
+                  <td><div class="cell-flex"><span class="deal-av" style="background:linear-gradient(135deg,#C13D89,#9D2B6C);">VL</span><span class="cust">Vanguard Logistics</span></div></td>
+                  <td class="meta">DEAL-000004 · Cobalt Security</td>
+                  <td><span class="badge won"><span class="bd"></span>WON</span></td>
+                  <td class="val">$56,200</td>
+                </tr>
+                <tr>
+                  <td><div class="cell-flex"><span class="deal-av" style="background:linear-gradient(135deg,#2563EB,#11447D);">SH</span><span class="cust">Summit Healthcare</span></div></td>
+                  <td class="meta">DEAL-000003 · Cygnet.One</td>
+                  <td><span class="badge reg"><span class="bd"></span>REGISTERED</span></td>
+                  <td class="val">$40,800</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Partners by Tier compact + quick actions -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="tt">
+              <h2>Partners by Tier</h2>
+              <span class="desc">Counts vs. tier ceiling (max 20)</span>
+            </div>
+            <a class="viewall" href="#">View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+          <div class="panel-body">
+            <div class="tier-block">
+              <div class="tier-row">
+                <span class="tname"><span class="pip" style="background:#2563EB;"></span>Registered</span>
+                <span class="tier-bar-track"><span class="tier-bar-fill" style="width:5%;background:#2563EB;"></span></span>
+                <span class="tct num">1</span>
+              </div>
+              <div class="tier-row">
+                <span class="tname"><span class="pip" style="background:#D9A211;"></span>Gold</span>
+                <span class="tier-bar-track"><span class="tier-bar-fill" style="width:100%;background:#D9A211;"></span></span>
+                <span class="tct num">20</span>
+              </div>
+              <div class="tier-row">
+                <span class="tname"><span class="pip" style="background:#7C3AED;"></span>Platinum</span>
+                <span class="tier-bar-track"><span class="tier-bar-fill" style="width:50%;background:#7C3AED;"></span></span>
+                <span class="tct num">10</span>
+              </div>
+              <div class="tier-row">
+                <span class="tname"><span class="pip" style="background:#64748B;"></span>Silver</span>
+                <span class="tier-bar-track"><span class="tier-bar-fill" style="width:90%;background:#64748B;"></span></span>
+                <span class="tct num">18</span>
+              </div>
+            </div>
+
+            <div style="height:1px;background:var(--border-soft);margin:14px 0 13px;"></div>
+
+            <div class="tt" style="margin-bottom:9px;"><h2 style="font-size:13px;">Quick Actions</h2></div>
+            <div style="display:flex;gap:9px;">
+              <button class="btn btn-primary" style="flex:1;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                Add Partner
+              </button>
+              <button class="btn btn-secondary" style="flex:1;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                Register Deal
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- footer info banner -->
+      <div class="info-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        You're signed in as <b>Super Admin</b> — full access to settings, numbering config, and all partner data.
+      </div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>
