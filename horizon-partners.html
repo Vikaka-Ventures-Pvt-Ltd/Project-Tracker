@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2P Connect — Partners · Editorial Horizon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --bg:#FAF8F3; --card:#FFFFFF; --ink:#15211C; --muted:#5C6B63; --line:#EBE5D9;
+    --teal:#0E9F8E; --teal-700:#0B6F62; --teal-tint:#E6F5F2;
+    --coral:#FB6F5C; --coral-tint:#FDEDE9; --amber:#F4A340; --amber-tint:#FCF0DD;
+    --gold:#C8951B; --platinum:#6D5BD0; --silver:#8A8F98;
+    --radius:22px; --radius-sm:14px;
+    --shadow:0 1px 2px rgba(21,33,28,.04), 0 12px 32px -16px rgba(21,33,28,.12);
+    --shadow-soft:0 1px 2px rgba(21,33,28,.03);
+  }
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  .num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum"}
+  .display{font-family:'Space Grotesk',sans-serif}
+  .eyebrow{font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+  a{color:inherit; text-decoration:none}
+
+  /* ============ TOP NAV (identical chrome) ============ */
+  .topbar{position:sticky; top:0; z-index:50; background:rgba(250,248,243,.82); backdrop-filter:blur(14px); border-bottom:1px solid var(--line)}
+  .topbar-inner{max-width:1360px; margin:0 auto; padding:0 30px; height:74px; display:flex; align-items:center; gap:14px}
+  .brand{display:flex; align-items:center; gap:12px; flex-shrink:0}
+  .brand-text{display:flex; flex-direction:column; line-height:1}
+  .brand-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px; letter-spacing:-.01em}
+  .brand-tag{font-size:9px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-top:4px}
+  .wl-pill{font-size:9px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--teal-700); background:var(--teal-tint); border:1px solid #CDEAE5; padding:3px 8px; border-radius:999px; margin-left:2px; align-self:center}
+  nav.mainnav{display:flex; align-items:center; gap:2px; margin-left:2px}
+  nav.mainnav a{position:relative; padding:8px 10px; border-radius:999px; font-size:12.5px; font-weight:500; color:var(--muted); white-space:nowrap; transition:color .15s, background .15s}
+  nav.mainnav a:hover{color:var(--ink); background:#F2EEE4}
+  nav.mainnav a.active{color:#fff; background:var(--teal); font-weight:600}
+  .nav-badge{display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px; margin-left:6px; font-size:10.5px; font-weight:700; border-radius:999px; background:var(--coral); color:#fff; vertical-align:middle}
+  .topbar-right{margin-left:auto; display:flex; align-items:center; gap:10px; flex-shrink:0}
+  .search{display:flex; align-items:center; gap:8px; height:40px; padding:0 14px; background:var(--card); border:1px solid var(--line); border-radius:999px; color:var(--muted); font-size:13px; width:148px; box-shadow:var(--shadow-soft)}
+  .search input{border:0; outline:0; background:transparent; font-family:inherit; font-size:13px; color:var(--ink); width:100%}
+  .userchip{display:flex; align-items:center; gap:10px; padding:5px 12px 5px 5px; background:var(--card); border:1px solid var(--line); border-radius:999px; box-shadow:var(--shadow-soft)}
+  .avatar{width:32px; height:32px; border-radius:50%; flex-shrink:0; background:linear-gradient(135deg,#0E9F8E,#0B6F62); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12.5px}
+  .userchip .meta{display:flex; flex-direction:column; line-height:1.15}
+  .userchip .meta b{font-size:12.5px; font-weight:600}
+  .userchip .meta span{font-size:10.5px; color:var(--muted)}
+
+  /* ============ PAGE ============ */
+  .page{max-width:1360px; margin:0 auto; padding:34px 40px 64px}
+  .pagehead{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:24px}
+  .pagehead .eyebrow{margin-bottom:10px}
+  .pagehead h1{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:38px; line-height:1.05; letter-spacing:-.02em; margin:0}
+  .pagehead p.sub{margin:10px 0 0; color:var(--muted); font-size:15px}
+  .btn{display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 20px; border-radius:999px; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; cursor:pointer; border:1px solid transparent; white-space:nowrap; transition:transform .12s, box-shadow .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--teal); color:#fff; box-shadow:0 8px 18px -8px rgba(14,159,142,.7)}
+  .btn-primary:hover{background:var(--teal-700)}
+  .btn-secondary{background:var(--card); color:var(--ink); border-color:var(--line); box-shadow:var(--shadow-soft)}
+
+  /* mini stats row */
+  .ministats{display:grid; grid-template-columns:repeat(4,1fr); gap:22px; margin-bottom:24px}
+  .ms{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow); display:flex; align-items:center; gap:14px}
+  .ms-icon{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0}
+  .ms .v{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:26px; line-height:1; letter-spacing:-.02em}
+  .ms .k{font-size:12px; color:var(--muted); margin-top:3px}
+
+  /* ============ TABLE CARD ============ */
+  .tablecard{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+  .tc-head{padding:24px 28px 0}
+  .tc-titlerow{display:flex; align-items:flex-end; justify-content:space-between; gap:20px}
+  .tc-titlerow h2{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:24px; letter-spacing:-.02em; margin:6px 0 0}
+  .tc-search{display:flex; align-items:center; gap:8px; height:42px; padding:0 16px; background:var(--bg); border:1px solid var(--line); border-radius:999px; color:var(--muted); width:280px}
+  .tc-search input{border:0; outline:0; background:transparent; font-family:inherit; font-size:13.5px; color:var(--ink); width:100%}
+
+  /* filter pills */
+  .filters{display:flex; flex-wrap:wrap; gap:9px; padding:20px 28px 22px}
+  .fpill{display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 15px; border-radius:999px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid var(--line); background:var(--bg); color:var(--muted); transition:.15s}
+  .fpill:hover{border-color:#D9D0BF; color:var(--ink)}
+  .fpill.active{background:var(--teal); color:#fff; border-color:var(--teal)}
+  .fpill .cnt{font-size:11.5px; font-weight:700; padding:1px 7px; border-radius:999px; background:rgba(255,255,255,.22)}
+  .fpill:not(.active) .cnt{background:#F2EEE4; color:var(--ink)}
+
+  /* table */
+  table{width:100%; border-collapse:collapse}
+  thead th{
+    text-align:left; padding:0 28px 12px; font-size:10.5px; font-weight:600;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+    border-bottom:1px solid var(--line);
+  }
+  thead th.r{text-align:right}
+  thead th.c{text-align:center}
+  tbody td{padding:18px 28px; border-bottom:1px solid var(--line); vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr{transition:background .12s}
+  tbody tr:hover{background:#FCFBF7}
+
+  .partner-cell{display:flex; align-items:center; gap:13px}
+  .pavatar{width:40px; height:40px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px; color:#fff}
+  .pmeta{display:flex; flex-direction:column}
+  .pmeta b{font-size:14px; font-weight:600}
+  .pmeta span{font-size:11.5px; color:var(--muted); font-weight:500}
+
+  .tier{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:5px 11px; border-radius:999px}
+  .tier::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor}
+  .tier-gold{color:#7E5B0E; background:#FBF1D8}
+  .tier-platinum{color:#5547B0; background:#EFEDF9}
+  .tier-silver{color:#5C6066; background:#EEF0F2}
+  .tier-registered{color:var(--teal-700); background:var(--teal-tint)}
+
+  .country{font-size:13.5px; color:var(--ink)}
+
+  .health-cell{display:flex; align-items:center; gap:11px}
+  .health-cell .hv{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px; width:24px}
+
+  .opendeals{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15px; text-align:center}
+  .opendeals.zero{color:var(--muted); font-weight:500}
+
+  .status{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:5px 11px; border-radius:999px}
+  .st-active{color:var(--teal-700); background:var(--teal-tint)}
+  .st-pending{color:#8A5410; background:var(--amber-tint)}
+  .status .sdot{width:7px; height:7px; border-radius:50%; background:currentColor}
+
+  /* footer pagination */
+  .tc-foot{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 28px; border-top:1px solid var(--line)}
+  .tc-foot .showing{font-size:13px; color:var(--muted)}
+  .tc-foot .showing b{color:var(--ink); font-weight:600}
+  .pager{display:flex; align-items:center; gap:6px}
+  .pbtn{min-width:36px; height:36px; padding:0 10px; display:inline-flex; align-items:center; justify-content:center; border-radius:10px; border:1px solid var(--line); background:var(--card); font-size:13px; font-weight:600; color:var(--ink); cursor:pointer; font-family:inherit}
+  .pbtn:hover{border-color:#D9D0BF}
+  .pbtn.active{background:var(--teal); color:#fff; border-color:var(--teal)}
+  .pbtn.ghost{border:none; background:transparent; color:var(--muted)}
+
+  @media (max-width:1180px){
+    .topbar-inner,.page{padding-left:22px; padding-right:22px}
+    nav.mainnav{display:none}
+    .ministats{grid-template-columns:repeat(2,1fr)}
+    .tc-search{width:200px}
+    thead th:nth-child(4),tbody td:nth-child(4){display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP NAV ============ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#">
+      <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="P2P Connect logo">
+        <defs><linearGradient id="p2pg" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#3B82F6"/><stop offset="0.55" stop-color="#7C3AED"/><stop offset="1" stop-color="#EC4899"/>
+        </linearGradient></defs>
+        <circle cx="24" cy="24" r="21" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="13.5" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="5.5" fill="url(#p2pg)"/>
+        <circle cx="45" cy="24" r="2.6" fill="#EC4899"/><circle cx="3" cy="24" r="2.6" fill="#3B82F6"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">P2P Connect</span>
+        <span class="brand-tag">Enabling Partnerships</span>
+      </span>
+      <span class="wl-pill">white-label</span>
+    </a>
+    <nav class="mainnav">
+      <a href="horizon-dashboard.html">Dashboard</a>
+      <a href="#">Applications</a>
+      <a href="#" class="active">Partners</a>
+      <a href="#">Deals</a>
+      <a href="#">Implementations</a>
+      <a href="#">PDM Inbox<span class="nav-badge num">3</span></a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="topbar-right">
+      <label class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+        <input type="text" placeholder="Search…" aria-label="Search">
+      </label>
+      <div class="userchip">
+        <span class="avatar">PA</span>
+        <span class="meta"><b>Platform Admin</b><span>Super Admin</span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ PAGE ============ -->
+<main class="page">
+  <div class="pagehead">
+    <div class="left">
+      <div class="eyebrow">Partner directory</div>
+      <h1>Partners</h1>
+      <p class="sub">49 partners across 4 tiers.</p>
+    </div>
+    <button class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Add Partner
+    </button>
+  </div>
+
+  <!-- mini stats -->
+  <div class="ministats">
+    <div class="ms">
+      <span class="ms-icon" style="background:var(--teal-tint)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B6F62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+      <div><div class="v num">49</div><div class="k">Total partners</div></div>
+    </div>
+    <div class="ms">
+      <span class="ms-icon" style="background:var(--teal-tint)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B6F62" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg></span>
+      <div><div class="v num">48</div><div class="k">Active</div></div>
+    </div>
+    <div class="ms">
+      <span class="ms-icon" style="background:var(--coral-tint)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D8493A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+      <div><div class="v num">82</div><div class="k">Avg health</div></div>
+    </div>
+    <div class="ms">
+      <span class="ms-icon" style="background:var(--amber-tint)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A86A12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5M17 4l3 3-3 3M7 14l-3 3 3 3"/></svg></span>
+      <div><div class="v num">7</div><div class="k">Open deals</div></div>
+    </div>
+  </div>
+
+  <!-- table card -->
+  <div class="tablecard">
+    <div class="tc-head">
+      <div class="tc-titlerow">
+        <div>
+          <div class="eyebrow">Directory</div>
+          <h2>All partners</h2>
+        </div>
+        <label class="tc-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+          <input type="text" placeholder="Search partners by name, type or country…" aria-label="Search partners">
+        </label>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button class="fpill active">All <span class="cnt num">49</span></button>
+      <button class="fpill">Gold <span class="cnt num">20</span></button>
+      <button class="fpill">Platinum <span class="cnt num">10</span></button>
+      <button class="fpill">Silver <span class="cnt num">18</span></button>
+      <button class="fpill">Registered <span class="cnt num">1</span></button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Partner</th>
+          <th>Tier</th>
+          <th>Country</th>
+          <th>Health</th>
+          <th class="c">Open Deals</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 1 Cygnet.One -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#0E9F8E,#0B6F62)">C1</span><span class="pmeta"><b>Cygnet.One</b><span>ISV</span></span></div></td>
+          <td><span class="tier tier-platinum">Platinum</span></td>
+          <td class="country">India</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 92"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#0E9F8E" stroke-width="4" stroke-linecap="round" stroke-dasharray="75.13 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">92</span>
+            </div>
+          </td>
+          <td class="opendeals num">4</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 2 Apex Solutions -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#F4A340,#D8841F)">AS</span><span class="pmeta"><b>Apex Solutions</b><span>SI</span></span></div></td>
+          <td><span class="tier tier-gold">Gold</span></td>
+          <td class="country">UAE</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 88"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#0E9F8E" stroke-width="4" stroke-linecap="round" stroke-dasharray="71.86 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">88</span>
+            </div>
+          </td>
+          <td class="opendeals num">3</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 3 Meridian Cloud -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#6D5BD0,#5547B0)">MC</span><span class="pmeta"><b>Meridian Cloud</b><span>ISV</span></span></div></td>
+          <td><span class="tier tier-gold">Gold</span></td>
+          <td class="country">Singapore</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 85"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#0E9F8E" stroke-width="4" stroke-linecap="round" stroke-dasharray="69.43 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">85</span>
+            </div>
+          </td>
+          <td class="opendeals num">2</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 4 Northwind Systems -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#8A8F98,#6B7079)">NS</span><span class="pmeta"><b>Northwind Systems</b><span>Reseller</span></span></div></td>
+          <td><span class="tier tier-silver">Silver</span></td>
+          <td class="country">India</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 71"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#F4A340" stroke-width="4" stroke-linecap="round" stroke-dasharray="57.99 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">71</span>
+            </div>
+          </td>
+          <td class="opendeals num">1</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 5 BlueOrbit -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#0E9F8E,#0B6F62)">BO</span><span class="pmeta"><b>BlueOrbit Technologies</b><span>ISV</span></span></div></td>
+          <td><span class="tier tier-platinum">Platinum</span></td>
+          <td class="country">UAE</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 90"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#0E9F8E" stroke-width="4" stroke-linecap="round" stroke-dasharray="73.51 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">90</span>
+            </div>
+          </td>
+          <td class="opendeals num">5</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 6 Sterling Consulting -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#F4A340,#D8841F)">SC</span><span class="pmeta"><b>Sterling Consulting</b><span>SI</span></span></div></td>
+          <td><span class="tier tier-gold">Gold</span></td>
+          <td class="country">Singapore</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 79"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#F4A340" stroke-width="4" stroke-linecap="round" stroke-dasharray="64.53 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">79</span>
+            </div>
+          </td>
+          <td class="opendeals num">2</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 7 Vertex Analytics -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#8A8F98,#6B7079)">VA</span><span class="pmeta"><b>Vertex Analytics</b><span>ISV</span></span></div></td>
+          <td><span class="tier tier-silver">Silver</span></td>
+          <td class="country">India</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 68"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#FB6F5C" stroke-width="4" stroke-linecap="round" stroke-dasharray="55.54 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">68</span>
+            </div>
+          </td>
+          <td class="opendeals num zero">0</td>
+          <td><span class="status st-pending"><span class="sdot"></span>Pending</span></td>
+        </tr>
+        <!-- 8 Halcyon Digital -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#F4A340,#D8841F)">HD</span><span class="pmeta"><b>Halcyon Digital</b><span>SI</span></span></div></td>
+          <td><span class="tier tier-gold">Gold</span></td>
+          <td class="country">UAE</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 83"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#0E9F8E" stroke-width="4" stroke-linecap="round" stroke-dasharray="67.79 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">83</span>
+            </div>
+          </td>
+          <td class="opendeals num">2</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 9 Cobalt Security -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#0E9F8E,#0B6F62)">CS</span><span class="pmeta"><b>Cobalt Security</b><span>ISV</span></span></div></td>
+          <td><span class="tier tier-platinum">Platinum</span></td>
+          <td class="country">Singapore</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 94"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#0E9F8E" stroke-width="4" stroke-linecap="round" stroke-dasharray="76.78 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">94</span>
+            </div>
+          </td>
+          <td class="opendeals num">3</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 10 Nimbus ERP -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#8A8F98,#6B7079)">NE</span><span class="pmeta"><b>Nimbus ERP Partners</b><span>Reseller</span></span></div></td>
+          <td><span class="tier tier-silver">Silver</span></td>
+          <td class="country">India</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 64"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#FB6F5C" stroke-width="4" stroke-linecap="round" stroke-dasharray="52.28 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">64</span>
+            </div>
+          </td>
+          <td class="opendeals num">1</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 11 Quanta Labs -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#F4A340,#D8841F)">QL</span><span class="pmeta"><b>Quanta Labs</b><span>ISV</span></span></div></td>
+          <td><span class="tier tier-gold">Gold</span></td>
+          <td class="country">UAE</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 80"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#F4A340" stroke-width="4" stroke-linecap="round" stroke-dasharray="65.34 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">80</span>
+            </div>
+          </td>
+          <td class="opendeals num">2</td>
+          <td><span class="status st-active"><span class="sdot"></span>Active</span></td>
+        </tr>
+        <!-- 12 Pioneer Integrators -->
+        <tr>
+          <td><div class="partner-cell"><span class="pavatar" style="background:linear-gradient(135deg,#0E9F8E,#0B6F62)">PI</span><span class="pmeta"><b>Pioneer Integrators</b><span>SI</span></span></div></td>
+          <td><span class="tier tier-registered">Registered</span></td>
+          <td class="country">India</td>
+          <td>
+            <div class="health-cell">
+              <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label="Health 55"><circle cx="17" cy="17" r="13" fill="none" stroke="#F2EEE4" stroke-width="4"/><circle cx="17" cy="17" r="13" fill="none" stroke="#FB6F5C" stroke-width="4" stroke-linecap="round" stroke-dasharray="44.92 81.68" transform="rotate(-90 17 17)"/></svg>
+              <span class="hv num">55</span>
+            </div>
+          </td>
+          <td class="opendeals num zero">0</td>
+          <td><span class="status st-pending"><span class="sdot"></span>Pending</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tc-foot">
+      <div class="showing">Showing <b>1–12</b> of <b>49</b> partners</div>
+      <div class="pager">
+        <button class="pbtn ghost">← Prev</button>
+        <button class="pbtn active">1</button>
+        <button class="pbtn">2</button>
+        <button class="pbtn">3</button>
+        <button class="pbtn">4</button>
+        <button class="pbtn ghost">Next →</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

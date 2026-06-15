@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2P Connect — Partners · Midnight Aurora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070B1A;
+    --bg2:#0B1124;
+    --glass:rgba(255,255,255,0.045);
+    --glass-strong:rgba(255,255,255,0.07);
+    --hair:rgba(255,255,255,0.10);
+    --hair-soft:rgba(255,255,255,0.06);
+    --text:#EAEEFB;
+    --muted:#97A3C7;
+    --faint:#7E8AB8;
+    --aurora:linear-gradient(120deg,#3B82F6 0%,#7C3AED 50%,#EC4899 100%);
+    --cyan:#22D3EE;
+    --gold:#F2C14E;
+    --platinum:#A78BFA;
+    --silver:#9AA6C7;
+    --registered:#60A5FA;
+    --won:#34D399;
+    --pending:#FBBF24;
+    --strong:#34D399;
+    --mid:#FBBF24;
+    --weak:#F472B6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";position:fixed;top:-220px;left:-120px;width:780px;height:780px;
+    background:radial-gradient(circle at center, rgba(124,58,237,0.30) 0%, rgba(124,58,237,0) 62%);
+    filter:blur(40px);z-index:0;pointer-events:none;
+  }
+  body::after{
+    content:"";position:fixed;top:-160px;right:-160px;width:760px;height:760px;
+    background:radial-gradient(circle at center, rgba(59,130,246,0.26) 0%, rgba(236,72,153,0.10) 45%, rgba(236,72,153,0) 70%);
+    filter:blur(46px);z-index:0;pointer-events:none;
+  }
+  .tabular{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+  .app{position:relative;z-index:1;display:grid;grid-template-columns:84px 1fr;min-height:100vh}
+  .rail{position:sticky;top:0;height:100vh;padding:20px 14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .rail-inner{
+    background:var(--glass);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid var(--hair);border-radius:22px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), 0 20px 50px rgba(0,0,0,0.45);
+    padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;
+    position:relative;overflow:hidden;
+  }
+  .rail-inner::before{
+    content:"";position:absolute;top:0;left:18%;right:18%;height:2px;
+    background:var(--aurora);opacity:.9;border-radius:2px;box-shadow:0 0 14px rgba(124,58,237,0.55);
+  }
+  .rail .brand-mark{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;
+    background:linear-gradient(135deg, rgba(124,58,237,0.18), rgba(59,130,246,0.10));border:1px solid var(--hair);margin-bottom:14px}
+  .navbtn{width:56px;height:56px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    color:var(--muted);text-decoration:none;position:relative;transition:all .18s ease;border:1px solid transparent}
+  .navbtn svg{width:21px;height:21px;display:block}
+  .navbtn .lbl{font-size:9.5px;font-weight:600;letter-spacing:.02em}
+  .navbtn:hover{color:var(--text);background:var(--glass);border-color:var(--hair-soft)}
+  .navbtn.active{color:#fff;background:var(--aurora);border-color:transparent;
+    box-shadow:0 8px 28px rgba(124,58,237,0.50), inset 0 1px 0 rgba(255,255,255,0.25)}
+  .navbtn .badge{position:absolute;top:6px;right:9px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#EC4899;color:#fff;
+    font-size:9px;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 2px rgba(7,11,26,0.8), 0 2px 8px rgba(236,72,153,0.6)}
+  .rail-spacer{flex:1}
+
+  .main{padding:22px 30px 48px;max-width:1480px}
+  .topbar{display:flex;align-items:center;gap:18px;background:var(--glass);
+    backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid var(--hair);border-radius:18px;padding:12px 18px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), 0 16px 40px rgba(0,0,0,0.30);margin-bottom:24px;position:relative;overflow:hidden}
+  .topbar::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 120px at 16% -40%, rgba(124,58,237,0.28), transparent 70%);pointer-events:none}
+  .lockup{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+  .lockup .txt{display:flex;flex-direction:column;line-height:1.05}
+  .lockup .name{font-size:16px;font-weight:800;letter-spacing:-.01em}
+  .lockup .tag{font-size:8.5px;font-weight:700;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:2px}
+  .wl-pill{margin-left:6px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);
+    border:1px solid rgba(34,211,238,0.35);background:rgba(34,211,238,0.08);border-radius:999px;padding:3px 8px}
+  .topbar .search{flex:1;max-width:420px;position:relative;z-index:1;display:flex;align-items:center;gap:9px;
+    background:rgba(255,255,255,0.04);border:1px solid var(--hair);border-radius:12px;padding:9px 13px;color:var(--muted)}
+  .topbar .search input{background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%}
+  .topbar .search input::placeholder{color:var(--faint)}
+  .topbar-right{display:flex;align-items:center;gap:14px;position:relative;z-index:1;margin-left:auto}
+  .chip{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);border:1px solid var(--hair);background:var(--glass);border-radius:999px;padding:6px 12px}
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--won);box-shadow:0 0 8px rgba(52,211,153,0.8)}
+  .userchip{display:flex;align-items:center;gap:10px;border-left:1px solid var(--hair);padding-left:14px}
+  .avatar{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;
+    background:var(--aurora);box-shadow:0 6px 18px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.25)}
+  .userchip .uinfo{display:flex;flex-direction:column;line-height:1.15}
+  .userchip .uname{font-size:13px;font-weight:700}
+  .userchip .urole{font-size:10.5px;color:var(--faint)}
+  .signout{font-size:11px;color:var(--muted);text-decoration:none;border:1px solid var(--hair);border-radius:9px;padding:7px 10px}
+  .signout:hover{color:var(--text);background:var(--glass)}
+
+  .btn{font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border-radius:13px;padding:11px 18px;border:1px solid var(--hair);
+    background:var(--glass);color:var(--text);display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:all .18s ease}
+  .btn:hover{background:var(--glass-strong)}
+  .btn.primary{background:var(--aurora);border-color:transparent;color:#fff;
+    box-shadow:0 8px 30px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.25)}
+  .btn.primary:hover{box-shadow:0 10px 38px rgba(124,58,237,0.60), inset 0 1px 0 rgba(255,255,255,0.3)}
+
+  .card{background:var(--glass);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid var(--hair);border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), 0 18px 44px rgba(0,0,0,0.30);padding:20px}
+
+  /* page head */
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:16px}
+  .page-title{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0}
+  .page-title .grad{background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .page-sub{color:var(--muted);font-size:13.5px;margin:5px 0 0}
+
+  /* mini stats */
+  .mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+  .ms{display:flex;align-items:center;gap:14px}
+  .ms .msicon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;
+    background:rgba(124,58,237,0.14);border:1px solid var(--hair-soft);color:var(--platinum)}
+  .ms .msl{font-size:11.5px;color:var(--muted)}
+  .ms .msv{font-size:24px;font-weight:800;letter-spacing:-.01em;line-height:1}
+
+  /* toolbar */
+  .toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .tbl-search{flex:1;min-width:240px;max-width:380px;display:flex;align-items:center;gap:9px;
+    background:var(--glass);border:1px solid var(--hair);border-radius:12px;padding:10px 14px;color:var(--muted)}
+  .tbl-search input{background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:13px;width:100%}
+  .tbl-search input::placeholder{color:var(--faint)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap}
+  .fbtn{font-size:12px;font-weight:600;border-radius:999px;padding:8px 14px;border:1px solid var(--hair);
+    background:var(--glass);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:inherit}
+  .fbtn:hover{color:var(--text)}
+  .fbtn .ct{font-size:11px;font-weight:700;color:var(--faint)}
+  .fbtn.active{color:#fff;background:var(--aurora);border-color:transparent;box-shadow:0 6px 22px rgba(124,58,237,0.40)}
+  .fbtn.active .ct{color:rgba(255,255,255,0.85)}
+
+  /* TABLE */
+  .table-card{padding:6px 6px 0}
+  table{width:100%;border-collapse:collapse}
+  thead th{
+    text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);
+    padding:14px 16px;border-bottom:1px solid var(--hair);
+  }
+  thead th.r{text-align:right}
+  thead th.c{text-align:center}
+  tbody td{padding:14px 16px;border-bottom:1px solid var(--hair-soft);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr{transition:background .15s ease}
+  tbody tr:hover{background:rgba(255,255,255,0.03)}
+  .pcell{display:flex;align-items:center;gap:13px}
+  .pav{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;flex:none;
+    background:linear-gradient(135deg,rgba(59,130,246,0.45),rgba(124,58,237,0.45));border:1px solid var(--hair)}
+  .pname{font-size:14px;font-weight:600}
+  .psub{font-size:11px;color:var(--faint);font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+
+  .tierbadge{font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+  .tier-gold{color:var(--gold);background:rgba(242,193,78,0.10);border:1px solid rgba(242,193,78,0.30)}
+  .tier-plat{color:var(--platinum);background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.32)}
+  .tier-silver{color:var(--silver);background:rgba(154,166,199,0.10);border:1px solid rgba(154,166,199,0.28)}
+  .tier-reg{color:var(--registered);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.30)}
+  .tierbadge .tdot{width:6px;height:6px;border-radius:50%}
+
+  .country{font-size:13px;color:var(--text)}
+  .health{display:flex;align-items:center;gap:10px}
+  .health .hnum{font-size:13.5px;font-weight:700;width:24px;text-align:right}
+  .opendeals{font-size:14px;font-weight:700;text-align:center}
+
+  .statuspill{font-size:10.5px;font-weight:700;letter-spacing:.04em;padding:4px 11px;border-radius:999px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+  .st-active{color:var(--won);background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.30);box-shadow:0 0 12px rgba(52,211,153,0.15)}
+  .st-pending{color:var(--pending);background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.30);box-shadow:0 0 12px rgba(251,191,36,0.15)}
+  .statuspill .sdot{width:6px;height:6px;border-radius:50%}
+
+  .table-foot{display:flex;align-items:center;justify-content:space-between;padding:16px;border-top:1px solid var(--hair);margin-top:0}
+  .table-foot .info{font-size:12.5px;color:var(--muted)}
+  .pager{display:flex;gap:6px}
+  .pg{min-width:34px;height:34px;border-radius:10px;border:1px solid var(--hair);background:var(--glass);color:var(--muted);
+    font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:grid;place-items:center}
+  .pg:hover{color:var(--text)}
+  .pg.active{color:#fff;background:var(--aurora);border-color:transparent;box-shadow:0 6px 20px rgba(124,58,237,0.40)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== FLOATING DARK GLASS RAIL (identical chrome) ===== -->
+  <nav class="rail" aria-label="Primary">
+    <div class="rail-inner">
+      <div class="brand-mark" title="P2P Connect">
+        <svg width="30" height="30" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="P2P Connect logo">
+          <defs><linearGradient id="p2pg" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#3B82F6"/><stop offset="0.55" stop-color="#7C3AED"/><stop offset="1" stop-color="#EC4899"/>
+          </linearGradient></defs>
+          <circle cx="24" cy="24" r="21" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="13.5" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="5.5" fill="url(#p2pg)"/>
+          <circle cx="45" cy="24" r="2.6" fill="#EC4899"/><circle cx="3" cy="24" r="2.6" fill="#3B82F6"/>
+        </svg>
+      </div>
+
+      <a class="navbtn" href="aurora-dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span class="lbl">Dashboard</span>
+      </a>
+      <a class="navbtn" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h11M9 12h11M9 19h11"/><rect x="3" y="3.5" width="3" height="3" rx="1"/><rect x="3" y="10.5" width="3" height="3" rx="1"/><rect x="3" y="17.5" width="3" height="3" rx="1"/></svg>
+        <span class="lbl">Apps</span>
+      </a>
+      <a class="navbtn active" href="#" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15 19a4.5 4.5 0 0 1 6.5-4"/></svg>
+        <span class="lbl">Partners</span>
+      </a>
+      <a class="navbtn" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>
+        <span class="lbl">Deals</span>
+      </a>
+      <a class="navbtn" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg>
+        <span class="lbl">Implement</span>
+      </a>
+      <a class="navbtn" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg>
+        <span class="lbl">PDM</span>
+        <span class="badge tabular">3</span>
+      </a>
+      <div class="rail-spacer"></div>
+      <a class="navbtn" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.92.84V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 7.27 19l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5.28 13.3 1.65 1.65 0 0 0 3 12a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.7 6.27l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 11 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.92.84l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9z"/></svg>
+        <span class="lbl">Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- TOP COMMAND BAR (identical) -->
+    <header class="topbar">
+      <div class="lockup">
+        <svg width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="P2P Connect logo">
+          <defs><linearGradient id="p2pg2" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#3B82F6"/><stop offset="0.55" stop-color="#7C3AED"/><stop offset="1" stop-color="#EC4899"/>
+          </linearGradient></defs>
+          <circle cx="24" cy="24" r="21" stroke="url(#p2pg2)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="13.5" stroke="url(#p2pg2)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="5.5" fill="url(#p2pg2)"/>
+          <circle cx="45" cy="24" r="2.6" fill="#EC4899"/><circle cx="3" cy="24" r="2.6" fill="#3B82F6"/>
+        </svg>
+        <div class="txt">
+          <span class="name">P2P Connect</span>
+          <span class="tag">Enabling Partnerships</span>
+        </div>
+        <span class="wl-pill">white-label</span>
+      </div>
+
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="text" placeholder="Search partners, deals, configs…" aria-label="Search">
+      </div>
+
+      <div class="topbar-right">
+        <span class="chip"><span class="dot"></span>API connected</span>
+        <span class="chip">English</span>
+        <div class="userchip">
+          <div class="avatar">PA</div>
+          <div class="uinfo">
+            <span class="uname">Platform Admin</span>
+            <span class="urole">Super Admin</span>
+          </div>
+          <a class="signout" href="#">Sign out</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE HEAD -->
+    <div class="page-head">
+      <div>
+        <h1 class="page-title"><span class="grad">Partners</span></h1>
+        <p class="page-sub">49 partners across 4 tiers</p>
+      </div>
+      <a class="btn primary" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add Partner</a>
+    </div>
+
+    <!-- MINI STATS -->
+    <section class="mini-stats">
+      <div class="card ms">
+        <div class="msicon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 19a4.5 4.5 0 0 1 6.5-4"/></svg></div>
+        <div><div class="msl">Total</div><div class="msv tabular">49</div></div>
+      </div>
+      <div class="card ms">
+        <div class="msicon" style="color:var(--won);background:rgba(52,211,153,0.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div><div class="msl">Active</div><div class="msv tabular">48</div></div>
+      </div>
+      <div class="card ms">
+        <div class="msicon" style="color:var(--cyan);background:rgba(34,211,238,0.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"/><path d="M12 8v4l2.5 2.5"/></svg></div>
+        <div><div class="msl">Avg health</div><div class="msv tabular">82</div></div>
+      </div>
+      <div class="card ms">
+        <div class="msicon" style="color:var(--gold);background:rgba(242,193,78,0.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+        <div><div class="msl">Open deals</div><div class="msv tabular">7</div></div>
+      </div>
+    </section>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="tbl-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="text" placeholder="Search partners…" aria-label="Search partners">
+      </div>
+      <div class="filters">
+        <button class="fbtn active">All <span class="ct tabular">49</span></button>
+        <button class="fbtn"><span class="tdot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold)"></span>Gold <span class="ct tabular">20</span></button>
+        <button class="fbtn"><span class="tdot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--platinum)"></span>Platinum <span class="ct tabular">10</span></button>
+        <button class="fbtn"><span class="tdot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--silver)"></span>Silver <span class="ct tabular">18</span></button>
+        <button class="fbtn"><span class="tdot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--registered)"></span>Registered <span class="ct tabular">1</span></button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Partner</th>
+            <th>Tier</th>
+            <th>Country</th>
+            <th>Health</th>
+            <th class="c">Open Deals</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- row template repeated; health viz = inline SVG arc -->
+          <tr>
+            <td><div class="pcell"><div class="pav">CO</div><div><div class="pname">Cygnet.One</div><div class="psub">ISV</div></div></div></td>
+            <td><span class="tierbadge tier-plat"><span class="tdot" style="background:var(--platinum)"></span>Platinum</span></td>
+            <td class="country">India</td>
+            <td><div class="health"><span class="hnum tabular">92</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="57" height="6" rx="3" fill="#34D399"/></svg></div></td>
+            <td class="opendeals tabular">4</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">AP</div><div><div class="pname">Apex Solutions</div><div class="psub">SI</div></div></div></td>
+            <td><span class="tierbadge tier-gold"><span class="tdot" style="background:var(--gold)"></span>Gold</span></td>
+            <td class="country">UAE</td>
+            <td><div class="health"><span class="hnum tabular">88</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="54.6" height="6" rx="3" fill="#34D399"/></svg></div></td>
+            <td class="opendeals tabular">3</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">ME</div><div><div class="pname">Meridian Cloud</div><div class="psub">ISV</div></div></div></td>
+            <td><span class="tierbadge tier-gold"><span class="tdot" style="background:var(--gold)"></span>Gold</span></td>
+            <td class="country">Singapore</td>
+            <td><div class="health"><span class="hnum tabular">85</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="52.7" height="6" rx="3" fill="#34D399"/></svg></div></td>
+            <td class="opendeals tabular">2</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">NO</div><div><div class="pname">Northwind Systems</div><div class="psub">Reseller</div></div></div></td>
+            <td><span class="tierbadge tier-silver"><span class="tdot" style="background:var(--silver)"></span>Silver</span></td>
+            <td class="country">India</td>
+            <td><div class="health"><span class="hnum tabular">71</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="44" height="6" rx="3" fill="#FBBF24"/></svg></div></td>
+            <td class="opendeals tabular">1</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">BL</div><div><div class="pname">BlueOrbit Technologies</div><div class="psub">ISV</div></div></div></td>
+            <td><span class="tierbadge tier-plat"><span class="tdot" style="background:var(--platinum)"></span>Platinum</span></td>
+            <td class="country">UAE</td>
+            <td><div class="health"><span class="hnum tabular">90</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="55.8" height="6" rx="3" fill="#34D399"/></svg></div></td>
+            <td class="opendeals tabular">5</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">ST</div><div><div class="pname">Sterling Consulting</div><div class="psub">SI</div></div></div></td>
+            <td><span class="tierbadge tier-gold"><span class="tdot" style="background:var(--gold)"></span>Gold</span></td>
+            <td class="country">Singapore</td>
+            <td><div class="health"><span class="hnum tabular">79</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="49" height="6" rx="3" fill="#FBBF24"/></svg></div></td>
+            <td class="opendeals tabular">2</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">VE</div><div><div class="pname">Vertex Analytics</div><div class="psub">ISV</div></div></div></td>
+            <td><span class="tierbadge tier-silver"><span class="tdot" style="background:var(--silver)"></span>Silver</span></td>
+            <td class="country">India</td>
+            <td><div class="health"><span class="hnum tabular">68</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="42.2" height="6" rx="3" fill="#F472B6"/></svg></div></td>
+            <td class="opendeals tabular">0</td>
+            <td><span class="statuspill st-pending"><span class="sdot" style="background:var(--pending)"></span>Pending</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">HA</div><div><div class="pname">Halcyon Digital</div><div class="psub">SI</div></div></div></td>
+            <td><span class="tierbadge tier-gold"><span class="tdot" style="background:var(--gold)"></span>Gold</span></td>
+            <td class="country">UAE</td>
+            <td><div class="health"><span class="hnum tabular">83</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="51.5" height="6" rx="3" fill="#FBBF24"/></svg></div></td>
+            <td class="opendeals tabular">2</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">CO</div><div><div class="pname">Cobalt Security</div><div class="psub">ISV</div></div></div></td>
+            <td><span class="tierbadge tier-plat"><span class="tdot" style="background:var(--platinum)"></span>Platinum</span></td>
+            <td class="country">Singapore</td>
+            <td><div class="health"><span class="hnum tabular">94</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="58.3" height="6" rx="3" fill="#34D399"/></svg></div></td>
+            <td class="opendeals tabular">3</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">NI</div><div><div class="pname">Nimbus ERP Partners</div><div class="psub">Reseller</div></div></div></td>
+            <td><span class="tierbadge tier-silver"><span class="tdot" style="background:var(--silver)"></span>Silver</span></td>
+            <td class="country">India</td>
+            <td><div class="health"><span class="hnum tabular">64</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="39.7" height="6" rx="3" fill="#F472B6"/></svg></div></td>
+            <td class="opendeals tabular">1</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">QU</div><div><div class="pname">Quanta Labs</div><div class="psub">ISV</div></div></div></td>
+            <td><span class="tierbadge tier-gold"><span class="tdot" style="background:var(--gold)"></span>Gold</span></td>
+            <td class="country">UAE</td>
+            <td><div class="health"><span class="hnum tabular">80</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="49.6" height="6" rx="3" fill="#FBBF24"/></svg></div></td>
+            <td class="opendeals tabular">2</td>
+            <td><span class="statuspill st-active"><span class="sdot" style="background:var(--won)"></span>Active</span></td>
+          </tr>
+          <tr>
+            <td><div class="pcell"><div class="pav">PI</div><div><div class="pname">Pioneer Integrators</div><div class="psub">SI</div></div></div></td>
+            <td><span class="tierbadge tier-reg"><span class="tdot" style="background:var(--registered)"></span>Registered</span></td>
+            <td class="country">India</td>
+            <td><div class="health"><span class="hnum tabular">55</span>
+              <svg width="62" height="14" viewBox="0 0 62 14"><rect x="0" y="4" width="62" height="6" rx="3" fill="rgba(255,255,255,0.08)"/><rect x="0" y="4" width="34.1" height="6" rx="3" fill="#F472B6"/></svg></div></td>
+            <td class="opendeals tabular">0</td>
+            <td><span class="statuspill st-pending"><span class="sdot" style="background:var(--pending)"></span>Pending</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table-foot">
+        <span class="info">Showing <strong>1–12</strong> of <strong class="tabular">49</strong> partners</span>
+        <div class="pager">
+          <button class="pg">‹</button>
+          <button class="pg active">1</button>
+          <button class="pg">2</button>
+          <button class="pg">3</button>
+          <button class="pg">4</button>
+          <button class="pg">›</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
