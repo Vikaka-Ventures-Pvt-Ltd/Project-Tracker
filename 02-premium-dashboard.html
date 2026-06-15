@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P2P Connect — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --p2p-blue:#2563EB; --p2p-blue-deep:#11447D; --p2p-magenta:#C13D89; --p2p-magenta-deep:#9D2B6C;
+    --p2p-purple:#7C3AED; --p2p-teal:#14B8A6;
+    --ink:#0F172A; --ink-2:#334155; --ink-3:#64748B; --ink-4:#94A3B8;
+    --bg:#F5F7FB; --card:#FFFFFF; --border:#E6EAF2; --border-soft:#EEF1F7;
+    --grad:linear-gradient(135deg,#2563EB 0%,#7C3AED 55%,#C13D89 100%);
+    --gold:#D9A211; --gold-tint:#FBF3DC; --plat:#7C3AED; --plat-tint:#EFE9FE;
+    --silver:#64748B; --silver-tint:#EEF1F6; --reg:#2563EB; --reg-tint:#E5ECFE;
+    --green:#16A34A; --green-tint:#DCFCE7; --amber:#D97706; --amber-tint:#FEF0D9;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.04);
+    --shadow-card:0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.03);
+    --shadow-pop:0 12px 28px -12px rgba(15,23,42,.18), 0 2px 6px rgba(15,23,42,.05);
+    --radius:16px; --radius-sm:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--ink);
+    font-size:14px; line-height:1.45;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .tnum{font-variant-numeric:tabular-nums;}
+  a{color:inherit;text-decoration:none;}
+  .app{display:flex; min-height:100vh;}
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:252px; flex:0 0 252px; position:sticky; top:0; align-self:flex-start;
+    height:100vh; background:var(--card); border-right:1px solid var(--border);
+    display:flex; flex-direction:column; padding:18px 14px 16px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:11px; padding:8px 8px 14px; position:relative;
+  }
+  .brand .lock{display:flex; flex-direction:column; line-height:1.1;}
+  .brand .name{font-weight:700; font-size:15.5px; letter-spacing:-.01em; color:var(--ink);}
+  .brand .tag{font-size:10px; color:var(--ink-3); letter-spacing:.07em; text-transform:uppercase; margin-top:3px;}
+  .wl-pill{
+    margin:2px 8px 14px; display:inline-flex; align-items:center; gap:6px; align-self:flex-start;
+    font-size:10.5px; font-weight:600; color:var(--p2p-purple);
+    background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(193,61,137,.08));
+    border:1px solid rgba(124,58,237,.18); padding:4px 9px; border-radius:999px; letter-spacing:.02em;
+  }
+  .wl-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--grad);}
+  .nav-eyebrow{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4);padding:6px 10px 8px;}
+  nav{display:flex; flex-direction:column; gap:2px;}
+  .nav-item{
+    display:flex; align-items:center; gap:11px; padding:9px 11px; border-radius:10px;
+    color:var(--ink-2); font-weight:500; font-size:13.5px; position:relative; cursor:pointer;
+    transition:background .12s ease,color .12s ease;
+  }
+  .nav-item svg{width:18px;height:18px;flex:0 0 18px;color:var(--ink-3);}
+  .nav-item:hover{background:var(--border-soft); color:var(--ink);}
+  .nav-item:hover svg{color:var(--ink-2);}
+  .nav-item.active{
+    background:linear-gradient(90deg,rgba(37,99,235,.10),rgba(124,58,237,.06) 60%,transparent);
+    color:var(--ink); font-weight:600;
+  }
+  .nav-item.active svg{color:var(--p2p-blue);}
+  .nav-item.active::before{
+    content:""; position:absolute; left:-14px; top:7px; bottom:7px; width:3px; border-radius:0 3px 3px 0;
+    background:var(--grad);
+  }
+  .nav-spacer{flex:1 1 auto;}
+  .side-divider{height:1px;background:var(--border-soft);margin:10px 6px;}
+  .side-meta{display:flex;flex-direction:column;gap:4px;padding:0 4px;}
+  .meta-row{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:9px;color:var(--ink-2);font-size:12.5px;font-weight:500;cursor:pointer;}
+  .meta-row:hover{background:var(--border-soft);}
+  .meta-row svg{width:16px;height:16px;color:var(--ink-3);}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.14);}
+  .meta-row .chev{margin-left:auto;color:var(--ink-4);}
+  .user-chip{
+    display:flex; align-items:center; gap:10px; padding:9px; border:1px solid var(--border);
+    border-radius:12px; margin-top:10px; background:var(--card);
+  }
+  .avatar{
+    width:34px;height:34px;border-radius:9px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:12.5px;color:#fff;background:var(--grad);letter-spacing:.02em;
+  }
+  .user-chip .who{display:flex;flex-direction:column;line-height:1.15;min-width:0;}
+  .user-chip .who b{font-size:12.5px;font-weight:600;color:var(--ink);}
+  .role-badge{
+    margin-top:3px; font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--p2p-purple); background:var(--plat-tint); padding:2px 6px; border-radius:5px; align-self:flex-start;
+  }
+
+  /* ============ MAIN ============ */
+  .main{flex:1 1 auto; min-width:0; display:flex; flex-direction:column;}
+  .topbar{
+    position:sticky; top:0; z-index:5; background:rgba(245,247,251,.82); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border); padding:13px 30px;
+    display:flex; align-items:center; gap:16px;
+  }
+  .topbar h1{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:0;}
+  .crumb{color:var(--ink-4);font-weight:500;font-size:13px;}
+  .crumb b{color:var(--ink-2);font-weight:600;}
+  .cmdk{
+    margin-left:auto; display:flex; align-items:center; gap:8px; width:340px; max-width:36vw;
+    background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 11px;
+    color:var(--ink-4); font-size:13px; box-shadow:var(--shadow-sm);
+  }
+  .cmdk svg{width:15px;height:15px;color:var(--ink-4);}
+  .cmdk .kbd{margin-left:auto;display:flex;gap:3px;}
+  .kbd span{font-size:10.5px;font-weight:600;color:var(--ink-3);background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:2px 5px;line-height:1;}
+  .icon-btn{
+    width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-sm);position:relative;
+  }
+  .icon-btn:hover{background:var(--border-soft);}
+  .icon-btn svg{width:17px;height:17px;color:var(--ink-2);}
+  .icon-btn .ping{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--p2p-magenta);border:1.5px solid var(--card);}
+
+  .content{padding:26px 30px 40px; max-width:1232px; width:100%;}
+
+  /* greeting */
+  .greet-row{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:18px;}
+  .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--p2p-blue);margin-bottom:8px;}
+  .greet h2{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px;color:var(--ink);}
+  .greet p{margin:0;color:var(--ink-3);font-size:14px;}
+  .seg{display:inline-flex;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:3px;box-shadow:var(--shadow-sm);}
+  .seg button{
+    border:0;background:transparent;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-3);
+    padding:7px 14px;border-radius:8px;cursor:pointer;
+  }
+  .seg button.on{background:var(--ink);color:#fff;box-shadow:var(--shadow-sm);}
+
+  /* status strip */
+  .status-strip{
+    display:flex;align-items:center;gap:10px;margin-bottom:22px;
+    background:linear-gradient(90deg,var(--green-tint),rgba(220,252,231,.35));
+    border:1px solid rgba(22,163,74,.22);border-radius:12px;padding:11px 15px;color:#136a36;font-weight:600;font-size:13px;
+  }
+  .status-strip .live{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(22,163,74,.16);}
+  .status-strip .sub{color:#15803d;font-weight:500;}
+  .status-strip .pills{margin-left:auto;display:flex;gap:6px;}
+  .status-strip .pills span{font-size:11.5px;font-weight:600;color:#15803d;background:rgba(255,255,255,.65);border:1px solid rgba(22,163,74,.2);border-radius:7px;padding:3px 9px;}
+
+  /* KPI */
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .kpi{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 16px;
+    box-shadow:var(--shadow-card);position:relative;overflow:hidden;
+  }
+  .kpi:hover{box-shadow:var(--shadow-pop);}
+  .kpi .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .kpi .ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--reg-tint);}
+  .kpi .ico svg{width:18px;height:18px;color:var(--p2p-blue);}
+  .kpi.k2 .ico{background:var(--plat-tint);} .kpi.k2 .ico svg{color:var(--p2p-purple);}
+  .kpi.k3 .ico{background:var(--green-tint);} .kpi.k3 .ico svg{color:var(--green);}
+  .kpi.k4 .ico{background:linear-gradient(135deg,rgba(193,61,137,.12),rgba(124,58,237,.1));} .kpi.k4 .ico svg{color:var(--p2p-magenta);}
+  .trend{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:3px 7px;border-radius:7px;}
+  .trend.up{color:var(--green);background:var(--green-tint);}
+  .trend.neutral{color:var(--p2p-blue);background:var(--reg-tint);}
+  .trend svg{width:12px;height:12px;}
+  .kpi .label{font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.01em;}
+  .kpi .num{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:6px 0 4px;color:var(--ink);}
+  .kpi .sub{font-size:12px;color:var(--ink-4);font-weight:500;}
+  .kpi .spark{position:absolute;right:16px;bottom:14px;opacity:.9;}
+
+  /* panels grid */
+  .panels{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:24px;align-items:start;}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-card);overflow:hidden;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;}
+  .panel-head .ttl{display:flex;flex-direction:column;gap:3px;}
+  .panel-head .eye{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-4);}
+  .panel-head h3{margin:0;font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--ink);}
+  .view-all{font-size:12.5px;font-weight:600;color:var(--p2p-blue);display:inline-flex;align-items:center;gap:4px;}
+  .view-all:hover{color:var(--p2p-blue-deep);}
+  .view-all svg{width:13px;height:13px;}
+
+  /* recent deals */
+  .deal-row{display:flex;align-items:center;gap:13px;padding:13px 18px;border-top:1px solid var(--border-soft);}
+  .deal-row:hover{background:var(--border-soft);}
+  .deal-av{width:36px;height:36px;border-radius:10px;flex:0 0 36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;color:var(--p2p-blue-deep);background:var(--reg-tint);}
+  .deal-row.w .deal-av{color:#136a36;background:var(--green-tint);}
+  .deal-main{min-width:0;flex:1 1 auto;}
+  .deal-main .cust{font-size:13.5px;font-weight:600;color:var(--ink);}
+  .deal-main .meta{font-size:11.5px;color:var(--ink-4);font-weight:500;margin-top:2px;}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:4px 9px;border-radius:7px;text-transform:uppercase;}
+  .badge .bdot{width:6px;height:6px;border-radius:50%;}
+  .b-won{color:var(--green);background:var(--green-tint);} .b-won .bdot{background:var(--green);}
+  .b-reg{color:var(--p2p-blue);background:var(--reg-tint);} .b-reg .bdot{background:var(--p2p-blue);}
+  .deal-val{font-weight:700;font-size:14px;color:var(--ink);text-align:right;width:88px;flex:0 0 88px;}
+
+  /* tiers */
+  .tier-list{padding:6px 18px 18px;}
+  .tier-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-soft);}
+  .tier-row:last-child{border-bottom:0;}
+  .tier-name{display:flex;align-items:center;gap:8px;width:104px;flex:0 0 104px;font-size:13px;font-weight:600;color:var(--ink-2);}
+  .tier-name .sw{width:9px;height:9px;border-radius:3px;}
+  .tier-track{display:block;flex:1 1 auto;height:9px;border-radius:6px;background:var(--border-soft);overflow:hidden;}
+  .tier-fill{display:block;height:100%;border-radius:6px;}
+  .tier-cnt{width:30px;flex:0 0 30px;text-align:right;font-size:13.5px;font-weight:700;color:var(--ink);}
+
+  /* quick actions card */
+  .qa-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:16px 18px;}
+  .qa-head{display:flex;flex-direction:column;gap:3px;margin-bottom:14px;}
+  .qa-head .eye{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-4);}
+  .qa-head h3{margin:0;font-size:15px;font-weight:600;letter-spacing:-.01em;}
+  .qa-btns{display:flex;gap:10px;}
+  .btn{
+    flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 14px;border-radius:11px;
+    font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;
+  }
+  .btn svg{width:15px;height:15px;}
+  .btn-primary{color:#fff;background:var(--grad);box-shadow:0 6px 16px -6px rgba(124,58,237,.5);}
+  .btn-primary:hover{filter:brightness(1.04);}
+  .btn-secondary{color:var(--ink);background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow-sm);}
+  .btn-secondary:hover{background:var(--border-soft);}
+
+  /* footer banner */
+  .foot-banner{
+    display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);box-shadow:var(--shadow-card);padding:14px 18px;color:var(--ink-2);font-size:13px;font-weight:500;
+  }
+  .foot-banner .shield{width:34px;height:34px;border-radius:10px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;background:var(--plat-tint);}
+  .foot-banner .shield svg{width:18px;height:18px;color:var(--p2p-purple);}
+  .foot-banner b{color:var(--ink);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <!-- Brand zone (white-label: swapped per ISV tenant) -->
+    <div class="brand">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="P2P Connect logo">
+        <defs><linearGradient id="p2pg" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#2563EB"/><stop offset="0.55" stop-color="#7C3AED"/><stop offset="1" stop-color="#C13D89"/>
+        </linearGradient></defs>
+        <circle cx="24" cy="24" r="21" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="13.5" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="5.5" fill="url(#p2pg)"/>
+        <circle cx="45" cy="24" r="2.6" fill="#C13D89"/><circle cx="3" cy="24" r="2.6" fill="#2563EB"/>
+      </svg>
+      <span class="lock">
+        <span class="name">P2P Connect</span>
+        <span class="tag">Enabling Partnerships</span>
+      </span>
+    </div>
+    <span class="wl-pill"><span class="dot"></span>White-label ready</span>
+
+    <span class="nav-eyebrow">Workspace</span>
+    <nav>
+      <a class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/><path d="M9 13h6M9 17h4"/></svg>
+        Applications
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M18.5 20a5 5 0 0 0-3-4.6"/></svg>
+        Partners
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>
+        Deals
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v6c0 4.5 3.3 7.3 8 8 4.7-.7 8-3.5 8-8V7l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+        Implementations
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H7l-3 3V5Z"/><path d="M8 9h8M8 12h5"/></svg>
+        PDM Inbox
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="nav-spacer"></div>
+
+    <div class="side-divider"></div>
+    <div class="side-meta">
+      <div class="meta-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg>
+        English <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="meta-row">
+        <span class="status-dot"></span> API connected
+      </div>
+      <div class="meta-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+        Sign out
+      </div>
+    </div>
+
+    <div class="user-chip">
+      <div class="avatar">PA</div>
+      <div class="who">
+        <b>Platform Admin</b>
+        <span class="role-badge">Super Admin</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <div class="main">
+    <header class="topbar">
+      <h1>Dashboard</h1>
+      <span class="crumb">·&nbsp;&nbsp;<b>Platform overview</b></span>
+      <div class="cmdk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        Search partners, deals, configs…
+        <span class="kbd"><span>⌘</span><span>K</span></span>
+      </div>
+      <button class="icon-btn" aria-label="Notifications"><span class="ping"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="Help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.5 1.5c0 1.5-2 2-2 3.5"/><path d="M12 17h.01"/></svg>
+      </button>
+    </header>
+
+    <div class="content">
+
+      <!-- greeting -->
+      <div class="greet-row">
+        <div class="greet">
+          <div class="eyebrow">Tuesday · 15 June 2026</div>
+          <h2>Good evening, Platform Admin 👋</h2>
+          <p>Here's what's happening in your partner ecosystem today.</p>
+        </div>
+        <div class="seg" role="tablist" aria-label="Time range">
+          <button>This week</button>
+          <button class="on">This month</button>
+          <button>This quarter</button>
+        </div>
+      </div>
+
+      <!-- status strip -->
+      <div class="status-strip">
+        <span class="live"></span>
+        <span>All systems operational</span>
+        <span class="sub">— last checked 2 min ago</span>
+        <span class="pills"><span>API ✓</span><span>DB ✓</span><span>Redis ✓</span></span>
+      </div>
+
+      <!-- KPI cards -->
+      <div class="kpi-grid">
+        <div class="kpi k1">
+          <div class="top">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M18.5 20a5 5 0 0 0-3-4.6"/></svg></span>
+            <span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 4-4 3 3 5-6"/><path d="M18 7h-4M18 7v4"/></svg>6%</span>
+          </div>
+          <div class="label">Total Partners</div>
+          <div class="num tnum">49</div>
+          <div class="sub">48 active</div>
+          <svg class="spark" width="64" height="26" viewBox="0 0 64 26" fill="none"><path d="M1 21 9 18 17 19 25 12 33 14 41 8 49 9 57 3" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="kpi k2">
+          <div class="top">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+            <span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 4-4 3 3 5-6"/><path d="M18 7h-4M18 7v4"/></svg>2</span>
+          </div>
+          <div class="label">Open Deals</div>
+          <div class="num tnum">7</div>
+          <div class="sub">Registered &amp; in review</div>
+          <svg class="spark" width="64" height="26" viewBox="0 0 64 26" fill="none"><path d="M1 17 9 16 17 18 25 13 33 15 41 10 49 12 57 7" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="kpi k3">
+          <div class="top">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M21 3h-5M21 3v5"/></svg></span>
+            <span class="trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 4-4 3 3 5-6"/><path d="M18 7h-4M18 7v4"/></svg>3</span>
+          </div>
+          <div class="label">Gold Partners</div>
+          <div class="num tnum">20</div>
+          <div class="sub">Highest performing</div>
+          <svg class="spark" width="64" height="26" viewBox="0 0 64 26" fill="none"><path d="M1 20 9 17 17 18 25 14 33 11 41 12 49 6 57 4" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="kpi k4">
+          <div class="top">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 7 20M17 4l-2 16M4 9h16M3 15h16"/></svg></span>
+            <span class="trend neutral">Configured</span>
+          </div>
+          <div class="label">Numbering Configs</div>
+          <div class="num tnum">8</div>
+          <div class="sub">Entity types configured</div>
+          <svg class="spark" width="64" height="26" viewBox="0 0 64 26" fill="none"><path d="M1 14 9 14 17 14 25 9 33 9 41 9 49 4 57 4" stroke="#C13D89" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <!-- panels -->
+      <div class="panels">
+
+        <!-- Recent deals -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="ttl">
+              <span class="eye">Pipeline</span>
+              <h3>Recent Deals</h3>
+            </div>
+            <a class="view-all">View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+          <div class="deal-row w">
+            <div class="deal-av">CL</div>
+            <div class="deal-main"><div class="cust">Consto LTD</div><div class="meta">DEAL-000007 · Apex Solutions</div></div>
+            <span class="badge b-won"><span class="bdot"></span>Won</span>
+            <div class="deal-val tnum">$48,000</div>
+          </div>
+          <div class="deal-row w">
+            <div class="deal-av">HM</div>
+            <div class="deal-main"><div class="cust">Helios Manufacturing</div><div class="meta">DEAL-000006 · BlueOrbit Technologies</div></div>
+            <span class="badge b-won"><span class="bdot"></span>Won</span>
+            <div class="deal-val tnum">$72,500</div>
+          </div>
+          <div class="deal-row">
+            <div class="deal-av">OR</div>
+            <div class="deal-main"><div class="cust">Orion Retail Group</div><div class="meta">DEAL-000005 · Meridian Cloud</div></div>
+            <span class="badge b-reg"><span class="bdot"></span>Registered</span>
+            <div class="deal-val tnum">$31,000</div>
+          </div>
+          <div class="deal-row w">
+            <div class="deal-av">VL</div>
+            <div class="deal-main"><div class="cust">Vanguard Logistics</div><div class="meta">DEAL-000004 · Cobalt Security</div></div>
+            <span class="badge b-won"><span class="bdot"></span>Won</span>
+            <div class="deal-val tnum">$56,200</div>
+          </div>
+          <div class="deal-row">
+            <div class="deal-av">SH</div>
+            <div class="deal-main"><div class="cust">Summit Healthcare</div><div class="meta">DEAL-000003 · Cygnet.One</div></div>
+            <span class="badge b-reg"><span class="bdot"></span>Registered</span>
+            <div class="deal-val tnum">$40,800</div>
+          </div>
+        </section>
+
+        <!-- Partners by tier -->
+        <section class="panel">
+          <div class="panel-head">
+            <div class="ttl">
+              <span class="eye">Distribution</span>
+              <h3>Partners by Tier</h3>
+            </div>
+            <a class="view-all">View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+          <div class="tier-list">
+            <div class="tier-row">
+              <span class="tier-name"><span class="sw" style="background:var(--gold)"></span>Gold</span>
+              <span class="tier-track"><span class="tier-fill" style="width:100%;background:var(--gold)"></span></span>
+              <span class="tier-cnt tnum">20</span>
+            </div>
+            <div class="tier-row">
+              <span class="tier-name"><span class="sw" style="background:var(--silver)"></span>Silver</span>
+              <span class="tier-track"><span class="tier-fill" style="width:90%;background:var(--silver)"></span></span>
+              <span class="tier-cnt tnum">18</span>
+            </div>
+            <div class="tier-row">
+              <span class="tier-name"><span class="sw" style="background:var(--plat)"></span>Platinum</span>
+              <span class="tier-track"><span class="tier-fill" style="width:50%;background:var(--plat)"></span></span>
+              <span class="tier-cnt tnum">10</span>
+            </div>
+            <div class="tier-row">
+              <span class="tier-name"><span class="sw" style="background:var(--reg)"></span>Registered</span>
+              <span class="tier-track"><span class="tier-fill" style="width:5%;background:var(--reg)"></span></span>
+              <span class="tier-cnt tnum">1</span>
+            </div>
+          </div>
+          <div style="padding:0 18px 18px;">
+            <div class="qa-head" style="margin-bottom:12px;">
+              <span class="eye">Quick Actions</span>
+            </div>
+            <div class="qa-btns">
+              <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add Partner</button>
+              <button class="btn btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Register Deal</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- footer banner -->
+      <div class="foot-banner">
+        <span class="shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.3 8 9 4.7-1.7 8-4.5 8-9V6l-8-3Z"/></svg></span>
+        <span>You're signed in as <b>Super Admin</b> — full access to settings, numbering config, and all partner data.</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
