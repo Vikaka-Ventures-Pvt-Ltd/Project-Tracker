@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1512, initial-scale=1">
+<title>P2P Connect — Partners · Analytics Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --p2p-blue:#2563EB; --p2p-blue-deep:#11447D; --p2p-magenta:#C13D89; --p2p-magenta-deep:#9D2B6C;
+    --p2p-purple:#7C3AED; --p2p-teal:#14B8A6;
+    --ink:#0F172A; --ink-2:#334155; --ink-3:#64748B; --bg:#F5F7FB; --card:#FFFFFF;
+    --border:#E6EAF2; --border-soft:#EEF1F7;
+    --grad:linear-gradient(135deg,#2563EB 0%,#7C3AED 55%,#C13D89 100%);
+    --gold:#D9A211; --gold-tint:#FBF3DC; --plat:#7C3AED; --plat-tint:#EFE9FE;
+    --silver:#64748B; --silver-tint:#EEF1F6; --reg:#2563EB; --reg-tint:#E5ECFE;
+    --green:#16A34A; --green-tint:#DCFCE7; --amber:#D97706; --amber-tint:#FEF0D9;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+    --shadow-md:0 1px 2px rgba(15,23,42,.04), 0 4px 12px rgba(15,23,42,.06), 0 12px 28px rgba(15,23,42,.05);
+    --shadow-lg:0 2px 6px rgba(15,23,42,.05), 0 18px 40px rgba(15,23,42,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:13px; line-height:1.45;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1, "ss01" 1;}
+  .app{display:flex; min-height:100vh; width:100%;}
+
+  /* ============ SIDEBAR ============ */
+  .sidebar{
+    width:256px; flex:0 0 256px; position:sticky; top:0; height:100vh;
+    background:#fff; border-right:1px solid var(--border);
+    display:flex; flex-direction:column; padding:16px 14px; gap:4px; z-index:5;
+  }
+  .brand{display:flex; align-items:center; gap:11px; padding:8px 8px 14px 8px; border-bottom:1px solid var(--border-soft); margin-bottom:10px; position:relative;}
+  .brand .lock{display:flex; flex-direction:column; gap:1px; min-width:0;}
+  .brand .l1{font-weight:700; font-size:15px; color:var(--ink); letter-spacing:-.01em;}
+  .brand .l2{font-size:10px; color:var(--ink-3); letter-spacing:.09em; text-transform:uppercase; font-weight:600;}
+  .wl-pill{position:absolute; top:6px; right:4px; font-size:8.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--p2p-purple); background:var(--plat-tint); border:1px solid #E0D6FB; padding:2px 6px; border-radius:999px;}
+  .nav-label{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); padding:8px 10px 4px;}
+  .nav{display:flex; flex-direction:column; gap:2px;}
+  .nav a{display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:9px; color:var(--ink-2); text-decoration:none; font-weight:500; font-size:13px; position:relative; transition:background .12s, color .12s;}
+  .nav a svg{width:18px; height:18px; flex:0 0 18px; color:var(--ink-3);}
+  .nav a:hover{background:var(--border-soft); color:var(--ink);}
+  .nav a.active{background:linear-gradient(135deg,rgba(37,99,235,.10),rgba(193,61,137,.08)); color:var(--ink); font-weight:700;}
+  .nav a.active svg{color:var(--p2p-blue);}
+  .nav a.active::before{content:""; position:absolute; left:-14px; top:50%; transform:translateY(-50%); width:3px; height:22px; border-radius:0 3px 3px 0; background:var(--grad);}
+  .nav .badge{margin-left:auto; font-size:10px; font-weight:700; color:#fff; background:var(--p2p-magenta); border-radius:999px; padding:1px 7px; min-width:18px; text-align:center;}
+  .side-spacer{flex:1 1 auto;}
+  .side-foot{border-top:1px solid var(--border-soft); padding-top:10px; display:flex; flex-direction:column; gap:8px;}
+  .lang-sel{display:flex; align-items:center; gap:9px; padding:8px 10px; border:1px solid var(--border); border-radius:9px; font-weight:600; color:var(--ink-2); cursor:pointer; font-size:12.5px;}
+  .lang-sel svg{width:16px; height:16px; color:var(--ink-3);}
+  .lang-sel .chev{margin-left:auto;}
+  .side-row{display:flex; align-items:center; gap:9px; padding:6px 10px; font-size:12.5px; color:var(--ink-2); font-weight:500;}
+  .side-row .dot{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 3px var(--green-tint);}
+  .side-row.signout{color:var(--ink-3); cursor:pointer;}
+  .side-row.signout svg{width:16px; height:16px;}
+  .side-row.signout:hover{color:var(--p2p-magenta-deep);}
+  .user-chip{display:flex; align-items:center; gap:10px; padding:9px 10px; border:1px solid var(--border); border-radius:11px; background:linear-gradient(180deg,#fff,#FCFDFF); box-shadow:var(--shadow-sm); margin-top:2px;}
+  .avatar{width:34px; height:34px; flex:0 0 34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:#fff; background:var(--grad); letter-spacing:.02em;}
+  .user-chip .meta{display:flex; flex-direction:column; min-width:0; gap:1px;}
+  .user-chip .nm{font-weight:700; font-size:12.5px; color:var(--ink);}
+  .role-badge{font-size:9.5px; font-weight:700; letter-spacing:.03em; color:var(--p2p-blue-deep); background:var(--reg-tint); border:1px solid #D5E1FD; border-radius:6px; padding:1px 6px; width:fit-content;}
+
+  /* ============ MAIN ============ */
+  .main{flex:1 1 auto; min-width:0; display:flex; flex-direction:column;}
+  .topbar{position:sticky; top:0; z-index:4; background:rgba(245,247,251,.86); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding:11px 24px; display:flex; align-items:center; gap:16px;}
+  .crumb{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--ink-3); font-weight:500;}
+  .crumb b{color:var(--ink); font-weight:700;}
+  .crumb svg{width:13px; height:13px;}
+  .topbar .search{margin-left:auto; display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--border); border-radius:9px; padding:7px 11px; width:280px; box-shadow:var(--shadow-sm);}
+  .topbar .search svg{width:15px; height:15px; color:var(--ink-3);}
+  .topbar .search input{border:0; outline:0; font:inherit; font-size:12.5px; width:100%; color:var(--ink); background:transparent;}
+  .topbar .search kbd{font-size:10px; font-weight:600; color:var(--ink-3); border:1px solid var(--border); border-radius:5px; padding:1px 5px; background:var(--bg);}
+  .icon-btn{width:36px; height:36px; border-radius:9px; border:1px solid var(--border); background:#fff; box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; color:var(--ink-2); cursor:pointer; position:relative;}
+  .icon-btn svg{width:17px; height:17px;}
+  .icon-btn .ind{position:absolute; top:8px; right:9px; width:7px; height:7px; border-radius:50%; background:var(--p2p-magenta); border:1.5px solid #fff;}
+
+  .content{padding:20px 24px 28px; display:flex; flex-direction:column; gap:16px;}
+
+  /* page header */
+  .page-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .page-head h1{margin:0; font-size:22px; font-weight:800; letter-spacing:-.02em; color:var(--ink);}
+  .page-head .sub{margin:3px 0 0; color:var(--ink-3); font-size:13px;}
+  .head-actions{display:flex; align-items:center; gap:10px;}
+  .search-lg{display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--border); border-radius:9px; padding:9px 12px; width:248px; box-shadow:var(--shadow-sm);}
+  .search-lg svg{width:15px; height:15px; color:var(--ink-3);}
+  .search-lg input{border:0; outline:0; font:inherit; font-size:12.5px; width:100%; color:var(--ink); background:transparent;}
+  .btn{display:inline-flex; align-items:center; gap:7px; font:inherit; font-weight:600; font-size:12.5px; padding:9px 14px; border-radius:9px; cursor:pointer; border:1px solid transparent; white-space:nowrap;}
+  .btn svg{width:15px; height:15px;}
+  .btn-primary{background:var(--grad); color:#fff; box-shadow:0 4px 12px rgba(124,58,237,.28); border:0;}
+  .btn-primary:hover{filter:brightness(1.05);}
+  .btn-secondary{background:#fff; color:var(--ink); border:1px solid var(--border); box-shadow:var(--shadow-sm);}
+  .btn-secondary:hover{background:var(--border-soft);}
+
+  /* mini stat strip */
+  .mini-strip{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+  .mini{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:12px;}
+  .mini .mic{width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:0 0 34px;}
+  .mini .mic svg{width:17px; height:17px;}
+  .mini .mlab{font-size:10.5px; font-weight:600; color:var(--ink-3);}
+  .mini .mval{font-size:20px; font-weight:800; letter-spacing:-.02em; color:var(--ink); line-height:1.05;}
+  .mini .mtrend{margin-left:auto; font-size:10.5px; font-weight:700; color:var(--green); background:var(--green-tint); padding:2px 7px; border-radius:6px;}
+  .ic.blue,.mic.blue{background:var(--reg-tint); color:var(--p2p-blue);}
+  .ic.green,.mic.green{background:var(--green-tint); color:var(--green);}
+  .ic.teal,.mic.teal{background:#D6F5F0; color:var(--p2p-teal);}
+  .ic.mag,.mic.mag{background:#FBE7F2; color:var(--p2p-magenta);}
+
+  /* main panel with toolbar + table */
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow-md); overflow:hidden;}
+  .toolbar{display:flex; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap;}
+  .seg-label{font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3);}
+  .chips{display:flex; gap:6px;}
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--ink-2); background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 12px; cursor:pointer; transition:.12s;}
+  .chip .cd{width:8px; height:8px; border-radius:3px;}
+  .chip .cn{font-size:10.5px; color:var(--ink-3); font-weight:700; font-variant-numeric:tabular-nums;}
+  .chip:hover{background:var(--border-soft);}
+  .chip.active{background:linear-gradient(135deg,rgba(37,99,235,.10),rgba(193,61,137,.08)); border-color:#C9D6F7; color:var(--ink); font-weight:700;}
+  .chip.active .cn{color:var(--p2p-blue);}
+  .tool-right{margin-left:auto; display:flex; align-items:center; gap:8px;}
+  .tool-btn{display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--ink-2); background:#fff; border:1px solid var(--border); border-radius:8px; padding:7px 11px; cursor:pointer;}
+  .tool-btn svg{width:14px; height:14px; color:var(--ink-3);}
+  .tool-btn:hover{background:var(--border-soft);}
+
+  /* TABLE */
+  .ptable{width:100%; border-collapse:collapse;}
+  .ptable thead th{
+    text-align:left; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3);
+    padding:10px 14px; border-bottom:1px solid var(--border); background:#FBFCFE; white-space:nowrap; position:sticky; top:0;
+  }
+  .ptable thead th.r{text-align:right;}
+  .ptable thead th.c{text-align:center;}
+  .ptable thead th .so{display:inline-flex; align-items:center; gap:4px;}
+  .ptable thead th svg{width:11px; height:11px; opacity:.6;}
+  .ptable tbody td{padding:11px 14px; border-bottom:1px solid var(--border-soft); font-size:12.5px; vertical-align:middle; white-space:nowrap;}
+  .ptable tbody tr:last-child td{border-bottom:0;}
+  .ptable tbody tr:hover{background:#FAFBFE;}
+  .ptable td.r{text-align:right;}
+  .ptable td.c{text-align:center;}
+
+  .p-cell{display:flex; align-items:center; gap:11px;}
+  .p-av{width:36px; height:36px; flex:0 0 36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; letter-spacing:.01em;}
+  .p-name{font-weight:700; color:var(--ink); font-size:13px;}
+  .p-type{font-size:10.5px; color:var(--ink-3); font-weight:600; letter-spacing:.02em;}
+
+  .tier-badge{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:7px; letter-spacing:.01em;}
+  .tier-badge .td{width:7px; height:7px; border-radius:2px;}
+  .tier-gold{color:#8A6608; background:var(--gold-tint);} .tier-gold .td{background:var(--gold);}
+  .tier-plat{color:#5B21B6; background:var(--plat-tint);} .tier-plat .td{background:var(--plat);}
+  .tier-silver{color:#475569; background:var(--silver-tint);} .tier-silver .td{background:var(--silver);}
+  .tier-reg{color:var(--p2p-blue-deep); background:var(--reg-tint);} .tier-reg .td{background:var(--reg);}
+
+  .country{display:inline-flex; align-items:center; gap:7px; color:var(--ink-2); font-weight:500;}
+  .flag{width:18px; height:13px; border-radius:2px; flex:0 0 18px; box-shadow:0 0 0 1px rgba(15,23,42,.06); overflow:hidden; display:block;}
+
+  /* health: number + sparkbar */
+  .health{display:flex; align-items:center; gap:9px; justify-content:flex-end;}
+  .health .hnum{font-weight:800; font-size:13px; font-variant-numeric:tabular-nums; min-width:22px; text-align:right;}
+  .health.g .hnum{color:var(--green);} .health.a .hnum{color:var(--amber);} .health.r .hnum{color:#DC2626;}
+  .hbar-spark{display:block;}
+
+  .winrate{display:inline-flex; align-items:center; gap:8px; justify-content:flex-end;}
+  .wr-track{width:42px; height:6px; border-radius:4px; background:var(--border-soft); overflow:hidden;}
+  .wr-fill{display:block; height:100%; border-radius:4px; background:linear-gradient(90deg,#7C3AED,#2563EB);}
+  .wr-num{font-weight:700; font-variant-numeric:tabular-nums; color:var(--ink-2); min-width:30px; text-align:right;}
+
+  .arr{font-weight:700; font-variant-numeric:tabular-nums; color:var(--ink);}
+  .deals-pill{display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:22px; padding:0 7px; border-radius:7px; font-weight:700; font-size:12px; font-variant-numeric:tabular-nums; background:var(--reg-tint); color:var(--p2p-blue-deep);}
+  .deals-pill.zero{background:var(--silver-tint); color:var(--ink-3);}
+  .last-act{color:var(--ink-3); font-weight:600; font-variant-numeric:tabular-nums; font-size:12px;}
+
+  .st-badge{display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:999px;}
+  .st-badge .sd{width:6px; height:6px; border-radius:50%;}
+  .st-active{color:#15803D; background:var(--green-tint);} .st-active .sd{background:var(--green);}
+  .st-pending{color:#9A5B05; background:var(--amber-tint);} .st-pending .sd{background:var(--amber);}
+
+  .row-act{width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; color:var(--ink-3); cursor:pointer; border:1px solid transparent;}
+  .row-act:hover{background:var(--border-soft); border-color:var(--border); color:var(--ink);}
+  .row-act svg{width:16px; height:16px;}
+
+  /* pagination footer */
+  .pag{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-top:1px solid var(--border); background:#FBFCFE;}
+  .pag .info{font-size:12px; color:var(--ink-3); font-weight:600; font-variant-numeric:tabular-nums;}
+  .pag .pages{display:flex; align-items:center; gap:5px;}
+  .pag-btn{min-width:32px; height:32px; padding:0 9px; border-radius:8px; border:1px solid var(--border); background:#fff; font:inherit; font-size:12px; font-weight:600; color:var(--ink-2); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-variant-numeric:tabular-nums;}
+  .pag-btn:hover{background:var(--border-soft);}
+  .pag-btn.cur{background:var(--grad); color:#fff; border:0;}
+  .pag-btn.nav svg{width:15px; height:15px;}
+  .pag-btn[disabled]{opacity:.45; cursor:default;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ SIDEBAR (identical chrome) ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg width="38" height="38" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="P2P Connect logo">
+        <defs><linearGradient id="p2pg" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#2563EB"/><stop offset="0.55" stop-color="#7C3AED"/><stop offset="1" stop-color="#C13D89"/>
+        </linearGradient></defs>
+        <circle cx="24" cy="24" r="21" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="13.5" stroke="url(#p2pg)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="5.5" fill="url(#p2pg)"/>
+        <circle cx="45" cy="24" r="2.6" fill="#C13D89"/><circle cx="3" cy="24" r="2.6" fill="#2563EB"/>
+      </svg>
+      <div class="lock">
+        <span class="l1">P2P Connect</span>
+        <span class="l2">Enabling Partnerships</span>
+      </div>
+      <span class="wl-pill" title="Each ISV tenant re-skins this brand zone with their own logo + name; the rest of the product stays identical.">White-label</span>
+    </div>
+
+    <div class="nav-label">Operations</div>
+    <nav class="nav">
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+        Applications
+      </a>
+      <a class="active" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Partners
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/></svg>
+        Deals
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 5-7"/></svg>
+        Implementations
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M22 7l-10 6L2 7"/></svg>
+        PDM Inbox
+        <span class="badge">3</span>
+      </a>
+      <a href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="side-spacer"></div>
+
+    <div class="side-foot">
+      <div class="lang-sel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
+        English
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="side-row"><span class="dot"></span> API connected</div>
+      <div class="side-row signout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        Sign out
+      </div>
+      <div class="user-chip">
+        <div class="avatar">PA</div>
+        <div class="meta">
+          <span class="nm">Platform Admin</span>
+          <span class="role-badge">Super Admin</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="topbar">
+      <div class="crumb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        <span>P2P Connect</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        <b>Partners</b>
+      </div>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input placeholder="Search partners, deals, configs…">
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="icon-btn" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="ind"></span>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 2.5"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- page header -->
+      <div class="page-head">
+        <div>
+          <h1>Partners</h1>
+          <p class="sub">49 partners across 4 tiers</p>
+        </div>
+        <div class="head-actions">
+          <div class="search-lg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+            <input placeholder="Search partners…">
+          </div>
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Export
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add Partner
+          </button>
+        </div>
+      </div>
+
+      <!-- mini stat strip -->
+      <div class="mini-strip">
+        <div class="mini">
+          <span class="mic blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+          <div><div class="mlab">Total Partners</div><div class="mval num">49</div></div>
+          <span class="mtrend">+6%</span>
+        </div>
+        <div class="mini">
+          <span class="mic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>
+          <div><div class="mlab">Active</div><div class="mval num">48</div></div>
+          <span class="mtrend">98%</span>
+        </div>
+        <div class="mini">
+          <span class="mic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+          <div><div class="mlab">Avg Health</div><div class="mval num">82</div></div>
+          <span class="mtrend">+1.5</span>
+        </div>
+        <div class="mini">
+          <span class="mic mag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span>
+          <div><div class="mlab">Open Deals</div><div class="mval num">7</div></div>
+          <span class="mtrend">+2</span>
+        </div>
+      </div>
+
+      <!-- main table panel -->
+      <section class="panel">
+        <!-- filter / segment toolbar -->
+        <div class="toolbar">
+          <span class="seg-label">Tier</span>
+          <div class="chips">
+            <span class="chip active">All <span class="cn">49</span></span>
+            <span class="chip"><span class="cd" style="background:#D9A211;"></span>Gold <span class="cn">20</span></span>
+            <span class="chip"><span class="cd" style="background:#7C3AED;"></span>Platinum <span class="cn">10</span></span>
+            <span class="chip"><span class="cd" style="background:#64748B;"></span>Silver <span class="cn">18</span></span>
+            <span class="chip"><span class="cd" style="background:#2563EB;"></span>Registered <span class="cn">1</span></span>
+          </div>
+          <div class="tool-right">
+            <span class="tool-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+              Filters
+            </span>
+            <span class="tool-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+              Sort: Health
+            </span>
+            <span class="tool-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              Columns
+            </span>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <table class="ptable">
+          <thead>
+            <tr>
+              <th>Partner</th>
+              <th>Tier</th>
+              <th>Country</th>
+              <th class="r"><span class="so">Health <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></th>
+              <th class="r">Win rate</th>
+              <th class="r">Revenue (ARR)</th>
+              <th class="c">Open deals</th>
+              <th class="r">Last activity</th>
+              <th class="c">Status</th>
+              <th class="c"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 1 Cygnet.One -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#2563EB,#7C3AED);">CO</span><span><div class="p-name">Cygnet.One</div><div class="p-type">ISV PARTNER</div></span></div></td>
+              <td><span class="tier-badge tier-plat"><span class="td"></span>Platinum</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="4.33" fill="#FF9933"/><rect y="4.33" width="18" height="4.33" fill="#fff"/><rect y="8.66" width="18" height="4.34" fill="#138808"/><circle cx="9" cy="6.5" r="1.4" fill="none" stroke="#0A3D91" stroke-width=".5"/></svg>India</span></td>
+              <td class="r"><span class="health g"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,11 8,10 16,8 24,9 32,6 40,5 48,3" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">92</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:74%;"></span></span><span class="wr-num">74%</span></span></td>
+              <td class="r"><span class="arr">$412K</span></td>
+              <td class="c"><span class="deals-pill">4</span></td>
+              <td class="r"><span class="last-act">2d ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 2 Apex Solutions -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#7C3AED,#C13D89);">AS</span><span><div class="p-name">Apex Solutions</div><div class="p-type">SYSTEM INTEGRATOR</div></span></div></td>
+              <td><span class="tier-badge tier-gold"><span class="td"></span>Gold</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="13" fill="#00732F"/><rect width="6" height="13" fill="#fff"/><polygon points="0,0 4,6.5 0,13" fill="#FF0000"/></svg>UAE</span></td>
+              <td class="r"><span class="health g"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,9 8,10 16,7 24,8 32,6 40,7 48,4" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">88</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:71%;"></span></span><span class="wr-num">71%</span></span></td>
+              <td class="r"><span class="arr">$338K</span></td>
+              <td class="c"><span class="deals-pill">3</span></td>
+              <td class="r"><span class="last-act">5h ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 3 Meridian Cloud -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#14B8A6,#2563EB);">MC</span><span><div class="p-name">Meridian Cloud</div><div class="p-type">ISV PARTNER</div></span></div></td>
+              <td><span class="tier-badge tier-gold"><span class="td"></span>Gold</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="5" cy="3.25" r="1.6" fill="#fff"/><circle cx="5.7" cy="3.25" r="1.4" fill="#EF3340"/></svg>Singapore</span></td>
+              <td class="r"><span class="health g"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,10 8,8 16,9 24,7 32,8 40,6 48,5" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">85</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:66%;"></span></span><span class="wr-num">66%</span></span></td>
+              <td class="r"><span class="arr">$294K</span></td>
+              <td class="c"><span class="deals-pill">2</span></td>
+              <td class="r"><span class="last-act">1d ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 4 Northwind Systems -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#64748B,#334155);">NS</span><span><div class="p-name">Northwind Systems</div><div class="p-type">RESELLER</div></span></div></td>
+              <td><span class="tier-badge tier-silver"><span class="td"></span>Silver</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="4.33" fill="#FF9933"/><rect y="4.33" width="18" height="4.33" fill="#fff"/><rect y="8.66" width="18" height="4.34" fill="#138808"/><circle cx="9" cy="6.5" r="1.4" fill="none" stroke="#0A3D91" stroke-width=".5"/></svg>India</span></td>
+              <td class="r"><span class="health a"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,8 8,9 16,8 24,10 32,9 40,11 48,10" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">71</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:52%;"></span></span><span class="wr-num">52%</span></span></td>
+              <td class="r"><span class="arr">$148K</span></td>
+              <td class="c"><span class="deals-pill">1</span></td>
+              <td class="r"><span class="last-act">3d ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 5 BlueOrbit Technologies -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#2563EB,#11447D);">BT</span><span><div class="p-name">BlueOrbit Technologies</div><div class="p-type">ISV PARTNER</div></span></div></td>
+              <td><span class="tier-badge tier-plat"><span class="td"></span>Platinum</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="13" fill="#00732F"/><rect width="6" height="13" fill="#fff"/><polygon points="0,0 4,6.5 0,13" fill="#FF0000"/></svg>UAE</span></td>
+              <td class="r"><span class="health g"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,9 8,7 16,8 24,6 32,5 40,4 48,3" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">90</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:73%;"></span></span><span class="wr-num">73%</span></span></td>
+              <td class="r"><span class="arr">$386K</span></td>
+              <td class="c"><span class="deals-pill">5</span></td>
+              <td class="r"><span class="last-act">4h ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 6 Sterling Consulting -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#D9A211,#C13D89);">SC</span><span><div class="p-name">Sterling Consulting</div><div class="p-type">SYSTEM INTEGRATOR</div></span></div></td>
+              <td><span class="tier-badge tier-gold"><span class="td"></span>Gold</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="5" cy="3.25" r="1.6" fill="#fff"/><circle cx="5.7" cy="3.25" r="1.4" fill="#EF3340"/></svg>Singapore</span></td>
+              <td class="r"><span class="health a"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,9 8,8 16,9 24,7 32,8 40,7 48,6" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">79</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:61%;"></span></span><span class="wr-num">61%</span></span></td>
+              <td class="r"><span class="arr">$221K</span></td>
+              <td class="c"><span class="deals-pill">2</span></td>
+              <td class="r"><span class="last-act">1w ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 7 Vertex Analytics -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#64748B,#7C3AED);">VA</span><span><div class="p-name">Vertex Analytics</div><div class="p-type">ISV PARTNER</div></span></div></td>
+              <td><span class="tier-badge tier-silver"><span class="td"></span>Silver</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="4.33" fill="#FF9933"/><rect y="4.33" width="18" height="4.33" fill="#fff"/><rect y="8.66" width="18" height="4.34" fill="#138808"/><circle cx="9" cy="6.5" r="1.4" fill="none" stroke="#0A3D91" stroke-width=".5"/></svg>India</span></td>
+              <td class="r"><span class="health r"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,7 8,8 16,9 24,9 32,11 40,10 48,12" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">68</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:44%;"></span></span><span class="wr-num">44%</span></span></td>
+              <td class="r"><span class="arr">$96K</span></td>
+              <td class="c"><span class="deals-pill zero">0</span></td>
+              <td class="r"><span class="last-act">2w ago</span></td>
+              <td class="c"><span class="st-badge st-pending"><span class="sd"></span>Pending</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 8 Halcyon Digital -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#C13D89,#7C3AED);">HD</span><span><div class="p-name">Halcyon Digital</div><div class="p-type">SYSTEM INTEGRATOR</div></span></div></td>
+              <td><span class="tier-badge tier-gold"><span class="td"></span>Gold</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="13" fill="#00732F"/><rect width="6" height="13" fill="#fff"/><polygon points="0,0 4,6.5 0,13" fill="#FF0000"/></svg>UAE</span></td>
+              <td class="r"><span class="health a"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,10 8,9 16,8 24,8 32,7 40,7 48,5" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">83</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:64%;"></span></span><span class="wr-num">64%</span></span></td>
+              <td class="r"><span class="arr">$257K</span></td>
+              <td class="c"><span class="deals-pill">2</span></td>
+              <td class="r"><span class="last-act">6h ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 9 Cobalt Security -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#11447D,#2563EB);">CS</span><span><div class="p-name">Cobalt Security</div><div class="p-type">ISV PARTNER</div></span></div></td>
+              <td><span class="tier-badge tier-plat"><span class="td"></span>Platinum</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="6.5" fill="#EF3340"/><rect y="6.5" width="18" height="6.5" fill="#fff"/><circle cx="5" cy="3.25" r="1.6" fill="#fff"/><circle cx="5.7" cy="3.25" r="1.4" fill="#EF3340"/></svg>Singapore</span></td>
+              <td class="r"><span class="health g"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,8 8,7 16,6 24,6 32,5 40,4 48,3" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">94</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:78%;"></span></span><span class="wr-num">78%</span></span></td>
+              <td class="r"><span class="arr">$448K</span></td>
+              <td class="c"><span class="deals-pill">3</span></td>
+              <td class="r"><span class="last-act">1h ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 10 Nimbus ERP Partners -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#64748B,#475569);">NE</span><span><div class="p-name">Nimbus ERP Partners</div><div class="p-type">RESELLER</div></span></div></td>
+              <td><span class="tier-badge tier-silver"><span class="td"></span>Silver</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="4.33" fill="#FF9933"/><rect y="4.33" width="18" height="4.33" fill="#fff"/><rect y="8.66" width="18" height="4.34" fill="#138808"/><circle cx="9" cy="6.5" r="1.4" fill="none" stroke="#0A3D91" stroke-width=".5"/></svg>India</span></td>
+              <td class="r"><span class="health r"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,8 8,9 16,10 24,9 32,11 40,11 48,12" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">64</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:40%;"></span></span><span class="wr-num">40%</span></span></td>
+              <td class="r"><span class="arr">$82K</span></td>
+              <td class="c"><span class="deals-pill">1</span></td>
+              <td class="r"><span class="last-act">5d ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 11 Quanta Labs -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#D9A211,#7C3AED);">QL</span><span><div class="p-name">Quanta Labs</div><div class="p-type">ISV PARTNER</div></span></div></td>
+              <td><span class="tier-badge tier-gold"><span class="td"></span>Gold</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="13" fill="#00732F"/><rect width="6" height="13" fill="#fff"/><polygon points="0,0 4,6.5 0,13" fill="#FF0000"/></svg>UAE</span></td>
+              <td class="r"><span class="health a"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,9 8,9 16,8 24,7 32,8 40,6 48,6" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">80</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:62%;"></span></span><span class="wr-num">62%</span></span></td>
+              <td class="r"><span class="arr">$232K</span></td>
+              <td class="c"><span class="deals-pill">2</span></td>
+              <td class="r"><span class="last-act">2d ago</span></td>
+              <td class="c"><span class="st-badge st-active"><span class="sd"></span>Active</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+            <!-- 12 Pioneer Integrators -->
+            <tr>
+              <td><div class="p-cell"><span class="p-av" style="background:linear-gradient(135deg,#2563EB,#14B8A6);">PI</span><span><div class="p-name">Pioneer Integrators</div><div class="p-type">SYSTEM INTEGRATOR</div></span></div></td>
+              <td><span class="tier-badge tier-reg"><span class="td"></span>Registered</span></td>
+              <td><span class="country"><svg class="flag" viewBox="0 0 18 13"><rect width="18" height="4.33" fill="#FF9933"/><rect y="4.33" width="18" height="4.33" fill="#fff"/><rect y="8.66" width="18" height="4.34" fill="#138808"/><circle cx="9" cy="6.5" r="1.4" fill="none" stroke="#0A3D91" stroke-width=".5"/></svg>India</span></td>
+              <td class="r"><span class="health r"><svg class="hbar-spark" width="48" height="16" viewBox="0 0 48 16"><polyline points="0,7 8,8 16,9 24,10 32,10 40,12 48,12" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hnum">55</span></span></td>
+              <td class="r"><span class="winrate"><span class="wr-track"><span class="wr-fill" style="width:30%;"></span></span><span class="wr-num">30%</span></span></td>
+              <td class="r"><span class="arr">$34K</span></td>
+              <td class="c"><span class="deals-pill zero">0</span></td>
+              <td class="r"><span class="last-act">3w ago</span></td>
+              <td class="c"><span class="st-badge st-pending"><span class="sd"></span>Pending</span></td>
+              <td class="c"><span class="row-act"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- pagination -->
+        <div class="pag">
+          <span class="info">Showing 1–12 of 49 partners</span>
+          <div class="pages">
+            <button class="pag-btn nav" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button class="pag-btn cur">1</button>
+            <button class="pag-btn">2</button>
+            <button class="pag-btn">3</button>
+            <button class="pag-btn">4</button>
+            <button class="pag-btn nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>
