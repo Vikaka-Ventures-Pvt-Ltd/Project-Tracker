@@ -1,107 +1,1101 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>P2P Connect — Design Direction Demos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartnerOS · Project Tracker</title>
 <style>
   :root{
-    --blue:#2563EB; --magenta:#C13D89; --purple:#7C3AED;
-    --ink:#0F172A; --ink-2:#334155; --ink-3:#64748B;
-    --bg:#F5F7FB; --card:#fff; --border:#E6EAF2;
-    --grad:linear-gradient(135deg,#2563EB 0%,#7C3AED 55%,#C13D89 100%);
+    --bg:#0b1020; --panel:#121a2e; --panel2:#0f1626; --line:#22304d;
+    --ink:#e8edf7; --muted:#93a1bd; --faint:#6b7a99;
+    --done:#22c55e; --done-bg:#0e2a1c; --done-line:#1c5538;
+    --prog:#f59e0b; --prog-bg:#2a2110; --prog-line:#5c4517;
+    --todo:#64748b; --todo-bg:#161d2e; --todo-line:#2b3852;
+    --eye:#38bdf8; --eye-bg:#0a2230; --eye-line:#15455c;
+    --accent:#5b8cff; --accent2:#8b5cf6;
+    --shadow:0 1px 0 rgba(255,255,255,.03), 0 12px 30px -12px rgba(0,0,0,.6);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1080px;margin:0 auto;padding:56px 28px 80px}
-  .brand{display:flex;align-items:center;gap:12px;margin-bottom:36px}
-  .brand .name{font-weight:800;font-size:18px;letter-spacing:-.01em}
-  .brand .sub{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
-  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0 0 8px}
-  h1{font-size:34px;letter-spacing:-.02em;margin:0 0 10px}
-  .lead{color:var(--ink-2);font-size:16px;line-height:1.6;max-width:680px;margin:0 0 40px}
-  .grid{display:grid;grid-template-columns:1fr;gap:20px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px -12px rgba(16,24,40,.12)}
-  .card .top{display:flex;align-items:flex-start;gap:16px}
-  .num{flex:0 0 auto;width:44px;height:44px;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
-  .card h2{margin:0 0 4px;font-size:20px;letter-spacing:-.01em}
-  .tag{font-size:12.5px;color:var(--ink-3);font-weight:600}
-  .card p{color:var(--ink-2);font-size:14.5px;line-height:1.6;margin:14px 0 18px}
-  .links{display:flex;gap:10px;flex-wrap:wrap}
-  a.btn{text-decoration:none;font-weight:600;font-size:14px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);color:var(--ink);background:#fff;transition:.15s}
-  a.btn:hover{border-color:var(--blue);color:var(--blue)}
-  a.btn.primary{background:var(--grad);color:#fff;border:none}
-  a.btn.primary:hover{opacity:.92;color:#fff}
-  .foot{margin-top:44px;font-size:13px;color:var(--ink-3);line-height:1.7;border-top:1px solid var(--border);padding-top:20px}
-  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--purple);background:#EFE9FE;border-radius:999px;padding:4px 10px}
+  body{
+    margin:0; background:radial-gradient(1200px 600px at 80% -10%, #16223f 0%, var(--bg) 55%);
+    color:var(--ink); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:40px 20px 80px;
+  }
+  .wrap{max-width:1080px; margin:0 auto}
+  header.top{margin-bottom:28px}
+  .phase-bar{display:flex; gap:8px; margin-bottom:20px}
+  .phase-bar button{appearance:none; border:1px solid var(--line); background:var(--panel); color:var(--muted); font:inherit; font-size:13.5px; font-weight:700;
+    padding:9px 20px; border-radius:10px; cursor:pointer; transition:background .15s,color .15s,border-color .15s,box-shadow .15s}
+  .phase-bar button:hover{color:var(--ink); border-color:var(--accent)}
+  .phase-bar button.active{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff; border-color:transparent; box-shadow:0 4px 14px -4px rgba(91,140,255,.55)}
+  .phase-panel{display:none}
+  .phase-panel.active{display:block}
+  .date-tag{color:var(--done); font-weight:600}
+  .eyebrow{color:var(--accent); font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:12px}
+  h1{margin:6px 0 6px; font-size:34px; letter-spacing:-.02em}
+  .sub{color:var(--muted); font-size:15px; max-width:680px}
+  .meta-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+  .pill{background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:6px 13px; font-size:12.5px; color:var(--muted)}
+  .pill b{color:var(--ink)}
+
+  /* summary cards */
+  .cards{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:26px 0 10px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow)}
+  .card .n{font-size:30px; font-weight:800; letter-spacing:-.02em}
+  .card .l{color:var(--muted); font-size:12.5px; margin-top:2px}
+  .card.green .n{color:var(--done)} .card.amber .n{color:var(--prog)} .card.blue .n{color:var(--accent)}
+
+  /* progress bar */
+  .progress{margin:22px 0 34px}
+  .progress .track{height:14px; background:var(--panel); border:1px solid var(--line); border-radius:999px; overflow:hidden; display:flex}
+  .progress .fill{background:linear-gradient(90deg,var(--accent),var(--accent2)); height:100%; width:0; transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+  .progress .cap{display:flex; justify-content:space-between; margin-top:8px; color:var(--muted); font-size:12.5px}
+
+  /* toolbar (interactive controls) */
+  .toolbar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 8px}
+  .filters{display:flex; gap:6px; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:4px}
+  .filters button{appearance:none; border:0; background:transparent; color:var(--muted); font:inherit; font-size:12.5px; font-weight:600;
+    padding:6px 14px; border-radius:999px; cursor:pointer; transition:background .15s,color .15s}
+  .filters button:hover{color:var(--ink)}
+  .filters button.active{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff}
+  .filters button .c{opacity:.7; font-weight:700; margin-left:5px}
+  .toolbar .spacer{flex:1 1 auto}
+  .ghost{appearance:none; background:var(--panel); border:1px solid var(--line); color:var(--muted); font:inherit; font-size:12.5px; font-weight:600;
+    padding:7px 13px; border-radius:9px; cursor:pointer; transition:color .15s,border-color .15s}
+  .ghost:hover{color:var(--ink); border-color:var(--accent)}
+
+  h2.sec{font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin:34px 0 14px; font-weight:700}
+
+  /* filtering: hide whole groups (scoped per phase panel) */
+  .phase-panel[data-filter="done"] .group[data-group="upcoming"]{display:none}
+  .phase-panel[data-filter="todo"] .group[data-group="completed"]{display:none}
+
+  /* sprint */
+  .sprint{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:14px; margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden}
+  .sprint .head{display:flex; align-items:center; gap:14px; padding:16px 18px; cursor:pointer; user-select:none}
+  .sprint .head:hover{background:rgba(91,140,255,.05)}
+  .sprint .head:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+  .chevron{flex:0 0 auto; color:var(--faint); transition:transform .2s ease; font-size:13px; width:14px; text-align:center}
+  .sprint.collapsed .chevron{transform:rotate(-90deg)}
+  .sprint .num{flex:0 0 auto; width:42px; height:42px; border-radius:11px; display:grid; place-items:center; font-weight:800; font-size:17px; background:#0c1322; border:1px solid var(--line)}
+  .sprint.done .num{color:var(--done); border-color:var(--done-line); background:var(--done-bg)}
+  .sprint.inprog .num{color:var(--prog); border-color:var(--prog-line); background:var(--prog-bg)}
+  .sprint.todo .num{color:var(--todo)}
+  .sprint .titles{flex:1 1 auto; min-width:0}
+  .sprint .t{font-weight:700; font-size:16px}
+  .sprint .win{color:var(--faint); font-size:12.5px; margin-top:1px}
+  .status{flex:0 0 auto; font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 11px; border-radius:999px; border:1px solid}
+  .status.done{color:var(--done); background:var(--done-bg); border-color:var(--done-line)}
+  .status.inprog{color:var(--prog); background:var(--prog-bg); border-color:var(--prog-line)}
+  .status.todo{color:var(--todo); background:var(--todo-bg); border-color:var(--todo-line)}
+  .sprint .body{padding:0 18px 18px; border-top:1px solid var(--line)}
+  .sprint.collapsed .body{display:none}
+  .grp{margin-top:16px}
+  .grp h4{margin:0 0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+  ul.tasks{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:6px 22px}
+  ul.tasks li{position:relative; padding-left:24px; color:var(--ink); font-size:13.5px}
+  ul.tasks li::before{content:""; position:absolute; left:2px; top:6px; width:14px; height:14px; border-radius:4px}
+  .sprint.done ul.tasks li::before{background:var(--done-bg); border:1px solid var(--done-line)}
+  .sprint.done ul.tasks li::after{content:"✓"; position:absolute; left:4px; top:1px; color:var(--done); font-size:11px; font-weight:800}
+  .sprint.todo ul.tasks li::before{background:var(--todo-bg); border:1px dashed var(--todo-line)}
+  ul.tasks li small{color:var(--faint)}
+
+  /* per-task overrides (used inside an in-progress sprint) */
+  ul.tasks li.t-done::before{background:var(--done-bg)!important; border:1px solid var(--done-line)!important}
+  ul.tasks li.t-done::after{content:"✓"!important; position:absolute; left:4px; top:1px; color:var(--done); font-size:11px; font-weight:800}
+  ul.tasks li.t-todo::before{background:var(--todo-bg)!important; border:1px dashed var(--todo-line)!important}
+  ul.tasks li.t-todo::after{content:""!important}
+  ul.tasks li.t-todo{color:var(--muted)}
+  .tag{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:1px 6px; border-radius:5px; margin-left:6px; vertical-align:middle}
+  .tag.t-done{color:var(--done); background:var(--done-bg); border:1px solid var(--done-line)}
+  .tag.t-todo{color:var(--prog); background:var(--prog-bg); border:1px solid var(--prog-line)}
+
+  /* "visible on frontend" block */
+  .visible{margin-top:16px; background:var(--eye-bg); border:1px solid var(--eye-line); border-radius:11px; padding:13px 15px}
+  .visible h4{margin:0 0 9px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--eye); display:flex; align-items:center; gap:7px}
+  .screens{display:flex; flex-wrap:wrap; gap:8px}
+  .screen{font-size:12.5px; color:var(--ink); background:#0c1a25; border:1px solid var(--eye-line); border-radius:8px; padding:6px 11px; display:flex; gap:7px; align-items:center}
+  .screen .where{color:var(--eye); font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:.04em}
+  @media (max-width:780px){ .cards{grid-template-columns:repeat(2,1fr)} ul.tasks{grid-template-columns:1fr} }
+  footer{margin-top:40px; color:var(--faint); font-size:12px; text-align:center}
+  footer code{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:2px 7px; color:var(--muted)}
+
+  @media (prefers-reduced-motion:reduce){
+    .progress .fill{transition:none}
+    .chevron{transition:none}
+  }
+
+  @media print{
+    @page{ size:A4; margin:14mm }
+    html,body{ background:var(--bg)!important }
+    *{ -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important }
+    body{ padding:0 }
+    .toolbar{ display:none }
+    .sprint.collapsed .body{ display:block }
+    .sprint, .card, .visible{ break-inside:avoid; page-break-inside:avoid }
+    h2.sec{ break-after:avoid }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="brand">
-    <svg width="38" height="38" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="P2P Connect logo">
-      <defs><linearGradient id="g" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#2563EB"/><stop offset="0.55" stop-color="#7C3AED"/><stop offset="1" stop-color="#C13D89"/>
-      </linearGradient></defs>
-      <circle cx="24" cy="24" r="21" stroke="url(#g)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
-      <circle cx="24" cy="24" r="13.5" stroke="url(#g)" stroke-width="2.4" stroke-dasharray="2.5 4" stroke-linecap="round"/>
-      <circle cx="24" cy="24" r="5.5" fill="url(#g)"/>
-      <circle cx="45" cy="24" r="2.6" fill="#C13D89"/><circle cx="3" cy="24" r="2.6" fill="#2563EB"/>
-    </svg>
-    <div><div class="name">P2P Connect</div><div class="sub">Enabling Partnerships</div></div>
+
+  <nav class="phase-bar" role="tablist" aria-label="Project phase">
+    <button role="tab" id="tab-phase2" data-phase="phase2" class="active" aria-selected="true" aria-controls="phase2-panel">Phase 2</button>
+    <button role="tab" id="tab-phase3" data-phase="phase3" aria-selected="false" aria-controls="phase3-panel">Phase 3</button>
+  </nav>
+
+  <!-- ═══════════════════ PHASE 2 ═══════════════════ -->
+  <div id="phase2-panel" class="phase-panel active" data-filter="all" role="tabpanel" aria-labelledby="tab-phase2">
+
+  <header class="top">
+    <div class="eyebrow">PartnerOS · Delivery Tracker</div>
+    <h1>Phase 2 — Sprint Progress</h1>
+    <p class="sub">End-to-end vertical slices (schema → API → UI → tests) shipped on the existing v1 design system. Each sprint below shows the concrete tasks delivered and the screens users see. All 9 sprints are complete; Phase 2 is at a Release Candidate (conditional GO) with environment-bound gates run during promotion.</p>
+    <div class="meta-row">
+      <span class="pill">Status as of <b>9 Jun 2026</b></span>
+      <span class="pill">Window <b>Months 7–10</b></span>
+      <span class="pill">Cadence <b>2-week sprints</b></span>
+      <span class="pill">Test suite <b>948 API + 341 web passing</b></span>
+    </div>
+  </header>
+
+  <section class="cards">
+    <div class="card green"><div class="n">9</div><div class="l">Sprints complete</div></div>
+    <div class="card amber"><div class="n">RC</div><div class="l">Release Candidate · conditional GO</div></div>
+    <div class="card blue"><div class="n">9</div><div class="l">Sprints in plan</div></div>
+    <div class="card"><div class="n">100%</div><div class="l">Phase 2 sprints delivered</div></div>
+  </section>
+
+  <div class="progress">
+    <div class="track"><div class="fill" data-target="100%"></div></div>
+    <div class="cap"><span>Sprint 1 · Month 7</span><span><b style="color:var(--ink)">9 done · RC cut</b></span><span>Sprint 9 · Verification</span></div>
   </div>
 
-  <p class="eyebrow">Partner Operations — Design Demos</p>
-  <h1>Three directions for the partner platform</h1>
-  <p class="lead">Three deliberately distinct directions — each a different <strong>theme, navigation model and layout</strong>, not three skins of one. Every direction includes a <strong>Dashboard</strong> and a <strong>Partners</strong> screen on the <strong>same live data</strong> so they stay comparable. All branded as P2P Connect with a <span class="pill">white-label ready</span> brand slot that each ISV tenant (e.g. Cygnet.One) reskins.</p>
-
-  <div class="grid">
-    <div class="card">
-      <div class="top">
-        <div class="num">1</div>
-        <div><h2>Data-Dense Analytics</h2><div class="tag">Light · command center · for data-driven managers</div></div>
-      </div>
-      <p>Left sidebar, light canvas. Eight KPIs with sparklines, a dual-line pipeline area chart, a tier-mix donut, plus a richer Partners table with health sparklines, win-rate bars, ARR and last-activity. Powerful and information-rich.</p>
-      <div class="links">
-        <a class="btn primary" href="03-analytics-dashboard.html">Dashboard</a>
-        <a class="btn" href="03-analytics-partners.html">Partners</a>
-      </div>
+  <!-- interactive toolbar -->
+  <div class="toolbar" role="region" aria-label="Tracker controls">
+    <div class="filters" role="group" aria-label="Filter sprints">
+      <button data-filter="all" class="active" aria-pressed="true">All<span class="c">9</span></button>
+      <button data-filter="done" aria-pressed="false">Completed<span class="c">9</span></button>
+      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">0</span></button>
     </div>
+    <span class="spacer"></span>
+    <button class="ghost phase-toggle-all" data-phase="phase2" aria-label="Collapse or expand all sprints">Collapse all</button>
+  </div>
 
-    <div class="card">
-      <div class="top">
-        <div class="num">2</div>
-        <div><h2>Midnight Aurora</h2><div class="tag">Dark · glassmorphic · gradient glow</div></div>
+  <div class="group" data-group="completed">
+  <h2 class="sec">Completed sprints</h2>
+
+  <!-- SPRINT 1 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">1</div>
+      <div class="titles">
+        <div class="t">Implementation &amp; Delivery Management foundation</div>
+        <div class="win">Month 7, Weeks 1–2 · merged PR #13 · <span class="date-tag">completed 29 May 2026</span></div>
       </div>
-      <p>Deep space-navy canvas with aurora blooms, a floating glass icon-rail, frosted cards and glowing blue→violet→pink data viz. The dramatic "wow" option — premium fintech/AI mood, a completely different silhouette.</p>
-      <div class="links">
-        <a class="btn primary" href="aurora-dashboard.html">Dashboard</a>
-        <a class="btn" href="aurora-partners.html">Partners</a>
-      </div>
+      <span class="status done">Done</span>
     </div>
-
-    <div class="card">
-      <div class="top">
-        <div class="num">3</div>
-        <div><h2>Editorial Horizon</h2><div class="tag">Light · top-nav, no sidebar · warm bento</div></div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>ImplProject / ImplMilestone / ImplBlocker schema</li>
+          <li>New ImplDocument, CustomerSatisfactionPulse, PartnerDeliveryScorecard</li>
+          <li>Full CRUD modules for all entities</li>
+          <li>S3 / MinIO pre-signed upload URLs (15-min)</li>
+          <li>Deal-close hook auto-creates IMPL-XXXXXX</li>
+          <li>Record-level RBAC + audit logging</li>
+        </ul>
       </div>
-      <p>Horizontal top navigation (no sidebar), warm parchment palette in teal + coral, an asymmetric bento grid and oversized Space&nbsp;Grotesk display type. Airy, expressive, magazine-like — a marketing-grade feel.</p>
-      <div class="links">
-        <a class="btn primary" href="horizon-dashboard.html">Dashboard</a>
-        <a class="btn" href="horizon-partners.html">Partners</a>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Implementations nav entry</li>
+          <li><code>/dashboard/implementations</code> list (DataTable + filters)</li>
+          <li>Implementation detail page with tabbed layout</li>
+          <li>Create-IMPL modal</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Sidebar</span> New "Implementations" nav item</div>
+          <div class="screen"><span class="where">Page</span> /dashboard/implementations list + filters</div>
+          <div class="screen"><span class="where">Page</span> Implementation detail with tabs</div>
+          <div class="screen"><span class="where">Modal</span> "Create Implementation" form</div>
+          <div class="screen"><span class="where">Deals</span> Won deal auto-shows linked IMPL-XXXXXX</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <p style="margin-top:28px;font-size:12.5px;color:var(--ink-3)">Earlier explorations (Refined Evolution, Modern Premium SaaS) are archived in this folder as <code>01-refined-*.html</code> and <code>02-premium-*.html</code>.</p>
-
-  <div class="foot">
-    Self-contained demo mockups · light + dark · real data (49 partners · 7 open deals · Gold 20 / Platinum 10 / Silver 18).<br>
-    Serve locally with <code>python3 -m http.server 8745</code> from this folder, then open <code>http://localhost:8745/</code>.
+  <!-- SPRINT 2 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">2</div>
+      <div class="titles">
+        <div class="t">Health-score engine, CSAT &amp; delivery scorecard</div>
+        <div class="win">Month 7, Weeks 3–4 · merged PR #18 · <span class="date-tag">completed 30 May 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Health-score service (40/25/20/15 weights, per-tenant overrides)</li>
+          <li>CSAT pulse trigger at end-of-phase</li>
+          <li>Scorecard aggregation via BullMQ</li>
+          <li>Events: MILESTONE_OVERDUE / BLOCKER_CREATED / HEALTH_SCORE_CHANGED</li>
+          <li>Escalation paths P1–P4</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Milestones tab (6-phase tracker, owner, due-date, criteria)</li>
+          <li>Blockers tab</li>
+          <li>RAG health banner with breakdown</li>
+          <li>Document upload tab + CSAT viewer</li>
+          <li>Partner Delivery Scorecard tab on partner detail</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">IMPL detail</span> RAG health banner + breakdown</div>
+          <div class="screen"><span class="where">IMPL detail</span> Milestones tab (6-phase tracker)</div>
+          <div class="screen"><span class="where">IMPL detail</span> Blockers tab</div>
+          <div class="screen"><span class="where">IMPL detail</span> Documents upload tab</div>
+          <div class="screen"><span class="where">IMPL detail</span> CSAT viewer</div>
+          <div class="screen"><span class="where">Partner detail</span> Delivery Scorecard tab</div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- SPRINT 3 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">3</div>
+      <div class="titles">
+        <div class="t">LMS connector, certification &amp; deal-reg gating</div>
+        <div class="win">Month 8, Weeks 1–2 · merged PR #19 · <span class="date-tag">completed 30 May 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Course (CRSE-XXXXXX), CourseAssignment, LmsConnectorConfig</li>
+          <li>Certification tracks (levels, prereqs, validity)</li>
+          <li>LMS adapter + Docebo reference connector + manual fallback</li>
+          <li>HMAC webhook <code>/webhooks/lms/:provider</code></li>
+          <li>Vault for LMS credentials</li>
+          <li>Deal-registration cert gating in DealsService</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Admin: LMS Connector config page (provider, URL, schedule, test)</li>
+          <li>Admin: Course catalogue (list + create/edit)</li>
+          <li>Admin: Certification Tracks builder</li>
+          <li>Deal-reg form inline cert error</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Settings</span> LMS Connector config page</div>
+          <div class="screen"><span class="where">Settings</span> Course catalogue (create/edit)</div>
+          <div class="screen"><span class="where">Settings</span> Certification Tracks builder</div>
+          <div class="screen"><span class="where">Register Deal</span> Inline "certification required" error</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 4 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">4</div>
+      <div class="titles">
+        <div class="t">WhatsApp channel, partner learning &amp; competency map</div>
+        <div class="win">Month 8, Weeks 3–4 · merged PR #26 · <span class="date-tag">completed 4 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Meta Cloud API connector + rate-aware BullMQ send queue</li>
+          <li>Channel selector in notification engine</li>
+          <li>Opt-in/out (STOP reply revokes consent + audit)</li>
+          <li>Delivery / read receipts into comms log</li>
+          <li>Timezone-aware scheduling</li>
+          <li>Column-level encryption on message body</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>Partner portal: My Learning (courses, completion %, certs)</li>
+          <li>Cert-expiry banner at 90/60/30 days</li>
+          <li>D3.js Competency Map heatmap on partner detail</li>
+          <li>Admin: WhatsApp config (phone-id, templates, opt-in stats)</li>
+          <li>Contact WhatsApp opt-in toggle + per-contact prefs</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Partner portal</span> "My Learning" (courses + certificates)</div>
+          <div class="screen"><span class="where">Partner portal</span> Cert-expiry banner (90/60/30 days)</div>
+          <div class="screen"><span class="where">Partner detail</span> D3 Competency Map heatmap</div>
+          <div class="screen"><span class="where">Settings</span> WhatsApp config + opt-in stats</div>
+          <div class="screen"><span class="where">Contact</span> WhatsApp opt-in toggle + prefs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 5 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">5</div>
+      <div class="titles">
+        <div class="t">PDM Agent &amp; programme-level currency</div>
+        <div class="win">Month 9, Weeks 1–2 · merged PR #29 · <span class="date-tag">completed 5 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>PDM Agent: Perceive → Analyse → Decide → Act → Remember loop</li>
+          <li>Autonomous daily digest + overdue alerts (WhatsApp / email)</li>
+          <li>Red-status escalation drafts (advisory → PDM queue)</li>
+          <li>Per-IMPL memory + LangGraph / Pinecone / LangSmith seams (Phase 3)</li>
+          <li>Programme-level currency + resolver fallback chain</li>
+          <li>txn → partner → programme → country → tenant → USD</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>PDM Inbox (digest, overdue alerts, escalation draft cards)</li>
+          <li>Accept / Edit / Reject actions + Run-digest</li>
+          <li>Admin: Agent Configuration (on/off per tenant + per IMPL)</li>
+          <li>Admin: Currencies → Programmes sub-tab</li>
+          <li>Partner onboarding currency picker (flexibility-gated)</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Sidebar</span> New "PDM Inbox" nav item</div>
+          <div class="screen"><span class="where">Page</span> PDM Inbox — Accept/Edit/Reject cards</div>
+          <div class="screen"><span class="where">Settings</span> PDM Agent config (advisory / autonomous)</div>
+          <div class="screen"><span class="where">Settings</span> Currencies → Programmes sub-tab</div>
+          <div class="screen"><span class="where">Partner edit</span> Programme + currency picker</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 6 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">6</div>
+      <div class="titles">
+        <div class="t">Qualitative tier scoring &amp; Customer Preview</div>
+        <div class="win">Month 9, Weeks 3–4 · merged PR #30 · <span class="date-tag">completed 6 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Qualitative criteria schema (6 dims, 1–5 scale, versioned)</li>
+          <li>Qualitative + CSAT criterion types in the tier scoring engine</li>
+          <li>Weighted composite + CSAT sub-threshold floors (≥4.0 Gold)</li>
+          <li>Customer Preview infra (enrolment, 14-day window)</li>
+          <li>PII masking pipeline + post-mask validator</li>
+          <li>Auto-expire on prod deploy + feedback channel API</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend</h4>
+        <ul class="tasks">
+          <li>PBM Qualitative Scoring tab (6 sliders + justification + history)</li>
+          <li>Tier scoring breakdown drawer (quant + qual side-by-side)</li>
+          <li>Admin: Customer Preview enrolment page (opt-in + terms)</li>
+          <li>STAGING preview feedback widget (severity / module / repro)</li>
+          <li>QA Manager preview-feedback dashboard tab</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Partner detail</span> Qualitative Scoring tab (6 sliders)</div>
+          <div class="screen"><span class="where">Partner detail</span> Tier breakdown drawer (quant + qual)</div>
+          <div class="screen"><span class="where">Settings</span> Customer Preview enrolment page</div>
+          <div class="screen"><span class="where">Staging</span> Floating preview-feedback widget</div>
+          <div class="screen"><span class="where">Settings</span> QA Agent → Preview Feedback triage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- SPRINT 7 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">7</div>
+      <div class="titles">
+        <div class="t">Full internationalisation (20 languages)</div>
+        <div class="win">Month 10, Weeks 1–2 · merged PR #31 · <span class="date-tag">completed 6 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Delivered</h4>
+        <ul class="tasks">
+          <li>12 new locale catalogues (it, nl, pl, sv, ru, tr, he, ko, zh-TW, hi, id, ms)</li>
+          <li>20-locale single source of truth (config + API allowlist)</li>
+          <li>ICU plural rules (ru/pl 3-form, he two/many) + conditional font loading</li>
+          <li>Hebrew RTL &amp; Hindi Devanagari visual QA</li>
+          <li>Indian numbering (12,34,567) &amp; ₪ RTL currency verified via Intl</li>
+          <li>Locale picker in partner portal + admin</li>
+          <li>SendGrid dynamic templates + WhatsApp template fan-out per locale</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Global</span> 20-language locale picker (portal + admin)</div>
+          <div class="screen"><span class="where">Global</span> Full UI translated incl. RTL Hebrew</div>
+          <div class="screen"><span class="where">Global</span> Localised dates, numbers &amp; currency</div>
+          <div class="screen"><span class="where">Notifications</span> WhatsApp + email in user's language</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRINT 8 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">8</div>
+      <div class="titles">
+        <div class="t">End-to-end chain, hardening &amp; release</div>
+        <div class="win">Month 10, Weeks 3–4 · <span class="date-tag">completed 9 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li>Feature-flag engine (per-tenant, rollout % + role allowlist, deterministic bucketing)</li>
+          <li>FeatureFlag schema + additive migration + 14 service tests</li>
+          <li>E2E chain spec: deal close → IMPL → CSAT → PDM digest → tier re-score</li>
+          <li>QA Agent seed expanded to ~31 P1/P2 cases (&gt;85% automation)</li>
+          <li>Customer Preview dry run (3 masked pilots + PII-leak assertion)</li>
+          <li>Stale tenant-config test repaired → full API suite 939 green</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend &amp; release</h4>
+        <ul class="tasks">
+          <li>Settings → Feature Flags admin tab (toggle / rollout slider / role chips)</li>
+          <li>WCAG: skip-to-content link + main landmark + aria on toggles (20-locale)</li>
+          <li>1k-VU dashboard perf benchmark — gate p95 &lt; 300ms</li>
+          <li>Release notes + on-call runbooks</li>
+          <li>WCAG 2.1 AA audit + Phase 2 security review</li>
+          <li>Staged-rollout flags wired for RC cut → prod</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Settings</span> Feature Flags tab (enable + ramp rollout)</div>
+          <div class="screen"><span class="where">Global</span> Staged rollout behind feature flags</div>
+          <div class="screen"><span class="where">Global</span> Keyboard "skip to content" + a11y fixes</div>
+          <div class="screen"><span class="where">Internal</span> Stability &amp; polish — no new end-user screens</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- SPRINT 9 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">9</div>
+      <div class="titles">
+        <div class="t">Full test &amp; verification pass</div>
+        <div class="win">Post Sprint 8 · Phase 2 sign-off gate · <span class="date-tag">completed 9 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Test layers</h4>
+        <ul class="tasks">
+          <li>Unit tests — services, resolvers, scoring math <small>948 API + 341 web green</small></li>
+          <li>Functional / integration — every API endpoint &amp; RBAC path <small>QA Agent suite</small></li>
+          <li>E2E — full Phase 2 chain + critical journeys <small>e2e.full_chain P1</small></li>
+          <li>Load &amp; stress — p95 &lt; 300ms at 1k VUs <small>k6 dashboard gate</small></li>
+          <li>Regression — QA Agent run vs baseline before release <small>release gate wired</small></li>
+          <li>Smoke — post-deploy health on every environment <small>smoke-test.sh</small></li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Verification &amp; sign-off</h4>
+        <ul class="tasks">
+          <li>Security review (agent RBAC, magic-link, preview isolation, S3 expiry)</li>
+          <li>Accessibility audit (WCAG 2.1 AA) incl. RTL &amp; CJK <small>baseline</small></li>
+          <li class="t-todo">Cross-browser &amp; responsive QA <span class="tag t-todo">at RC</span></li>
+          <li>Data-migration dry run + rollback rehearsal <small>procedure + additive</small></li>
+          <li class="t-todo">UAT with pilot tenants on staging <span class="tag t-todo">scheduled</span></li>
+          <li>Go / no-go checklist — Phase 2 verification report</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Internal</span> QA dashboard — coverage, runs, release gate</div>
+          <div class="screen"><span class="where">Internal</span> Defect tracker with severity + exceptions</div>
+          <div class="screen"><span class="where">Stakeholders</span> Phase 2 verification report / sign-off</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /group completed -->
+
+  <div class="group" data-group="upcoming">
+
+  <h2 class="sec">After Phase 2 ships — verification &amp; next steps</h2>
+  <div class="sprint todo">
+    <div class="body" style="border-top:none; padding-top:18px">
+      <div class="grp" style="margin-top:0">
+        <h4>To verify after Phase 2 is complete</h4>
+        <ul class="tasks">
+          <li>Production monitoring &amp; alerting live (errors, latency, queues)</li>
+          <li>Real-usage telemetry flowing from new modules (IMPL, PDM, LMS)</li>
+          <li>Tenant onboarding validated on the new feature set</li>
+          <li>Backup &amp; disaster-recovery drill on production data</li>
+          <li>Cost / performance review under real load</li>
+          <li>Stakeholder demo + feedback capture</li>
+          <li>Phase 3 backlog groomed (live LLM, +11 languages, Telegram)</li>
+          <li>Post-Phase-2 design refresh kicked off (separate workstream)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  </div><!-- /group upcoming -->
+
+  </div><!-- /phase2-panel -->
+
+  <!-- ═══════════════════ PHASE 3 ═══════════════════ -->
+  <div id="phase3-panel" class="phase-panel" data-filter="all" role="tabpanel" aria-labelledby="tab-phase3" hidden>
+
+  <header class="top">
+    <div class="eyebrow">PartnerOS · Delivery Tracker</div>
+    <h1>Phase 3 — AI Agents &amp; i18n Expansion</h1>
+    <p class="sub">Full AI agent runtime (LLM gateway, memory, orchestration, guardrails) plus EMEA/Asia language expansion. Sprints 1–2 delivered the production-ready runtime foundation; Sprint 3 (Telegram channel) is in progress. All future agents extend <code>BaseAgent</code>.</p>
+    <div class="meta-row">
+      <span class="pill">Status as of <b>22 Jun 2026</b></span>
+      <span class="pill">Branch <b>claude/competent-cray-e782ba</b></span>
+      <span class="pill">Cadence <b>2-week sprints × 10</b></span>
+      <span class="pill">Test suite <b>1621 API + 384 web passing</b></span>
+    </div>
+  </header>
+
+  <section class="cards">
+    <div class="card green"><div class="n">2</div><div class="l">Sprints complete</div></div>
+    <div class="card amber"><div class="n">1</div><div class="l">Sprint in progress (~50%)</div></div>
+    <div class="card blue"><div class="n">10</div><div class="l">Sprints in plan</div></div>
+    <div class="card"><div class="n">25%</div><div class="l">Phase 3 progress</div></div>
+  </section>
+
+  <div class="progress">
+    <div class="track"><div class="fill" data-target="25%"></div></div>
+    <div class="cap"><span>Sprint 1 · Runtime I</span><span><b style="color:var(--ink)">2 done · 1 in flight</b></span><span>Sprint 10 · Hardening</span></div>
+  </div>
+
+  <div class="toolbar" role="region" aria-label="Phase 3 tracker controls">
+    <div class="filters" role="group" aria-label="Filter sprints">
+      <button data-filter="all" class="active" aria-pressed="true">All<span class="c">10</span></button>
+      <button data-filter="done" aria-pressed="false">Completed<span class="c">2</span></button>
+      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">8</span></button>
+    </div>
+    <span class="spacer"></span>
+    <button class="ghost phase-toggle-all" data-phase="phase3" aria-label="Collapse or expand all sprints">Collapse all</button>
+  </div>
+
+  <div class="group" data-group="completed">
+  <h2 class="sec">Completed sprints</h2>
+
+  <!-- P3 SPRINT 1 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">1</div>
+      <div class="titles">
+        <div class="t">Runtime Foundation I — LLM Gateway &amp; Vector Memory</div>
+        <div class="win">Sprint 1 · <span class="date-tag">completed Sat 20 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>LLM Gateway · <code>apps/api/src/llm/</code></h4>
+        <ul class="tasks">
+          <li>Azure OpenAI + Anthropic provider integrations</li>
+          <li>Provider failover, retries &amp; cost metering</li>
+          <li>Structured outputs + embeddings</li>
+          <li>Prompt registry + tenant token budgeting</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Vector Memory · <code>apps/api/src/agent-memory/</code></h4>
+        <ul class="tasks">
+          <li>pgvector cosine-similarity retrieval</li>
+          <li>Importance scoring · remember() / recall()</li>
+          <li>Graceful degradation when vector store unavailable</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Database &amp; Infrastructure</h4>
+        <ul class="tasks">
+          <li>AgentMemory, LlmUsage, AgentActivityLog models</li>
+          <li>Tenant.monthlyLlmTokenBudget field</li>
+          <li>docker-compose → pgvector/pgvector:pg16</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>✓ Verification</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Tests</span> 31 new Sprint 1 tests — all passing</div>
+          <div class="screen"><span class="where">Build</span> Prisma generate · typecheck · Nest build PASS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 2 -->
+  <div class="sprint done">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">2</div>
+      <div class="titles">
+        <div class="t">Runtime Foundation II — Agent Orchestration</div>
+        <div class="win">Sprint 2 · <span class="date-tag">completed 22 Jun 2026</span></div>
+      </div>
+      <span class="status done">Done</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>BaseAgent Runtime · <code>apps/api/src/agent-runtime/</code></h4>
+        <ul class="tasks">
+          <li>P-A-D-A-R loop: Perceive → Analyze → Decide → Act → Remember</li>
+          <li>run() + plan() methods — all agents inherit BaseAgent</li>
+          <li>GuardrailService (irreversible → GATED, after-hours → ADVISORY)</li>
+          <li>AgentPolicyService via @casl/ability (replaces OPA placeholder)</li>
+          <li>Human-in-the-loop: AUTONOMOUS / ADVISORY / GATED modes</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Orchestration &amp; Observability</h4>
+        <ul class="tasks">
+          <li>AgentTracingService + AgentTrace model (optional LangSmith export)</li>
+          <li>AgentRuntimeService — registry, event dispatch, scheduled exec, Redis leader lock</li>
+          <li>AgentEvalService — golden datasets, scoring, persisted AgentEvalRun</li>
+          <li>ReferenceHealthAgent — runtime validation template</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Frontend &amp; Database</h4>
+        <ul class="tasks">
+          <li><code>/dashboard/agent-runtime</code> — traces, activity, evaluations</li>
+          <li>Navigation key added to all 20 locales</li>
+          <li>Migration 20260623000000_phase3_sprint2_agent_orchestration</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>✓ Verification</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Tests</span> 28 runtime tests + 1621 API / 384 web green</div>
+          <div class="screen"><span class="where">Build</span> Nest build + Next build PASS</div>
+          <div class="screen"><span class="where">Docs</span> docs/PHASE3-SPRINT-PLAN.md · docs/AGENT-RUNTIME.md</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /group completed -->
+
+  <div class="group" data-group="upcoming">
+  <h2 class="sec">In progress &amp; upcoming sprints</h2>
+
+  <!-- P3 SPRINT 3 -->
+  <div class="sprint inprog">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">3</div>
+      <div class="titles">
+        <div class="t">Telegram Channel Completion</div>
+        <div class="win">Sprint 3 · <span class="date-tag" style="color:var(--prog)">~50% · in progress 22 Jun 2026</span></div>
+      </div>
+      <span class="status inprog">In progress</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Backend</h4>
+        <ul class="tasks">
+          <li class="t-done">Telegram Bot integration</li>
+          <li class="t-done">Telegram channel adapter</li>
+          <li class="t-done">Webhook handlers</li>
+          <li class="t-todo">Notification routing through channel abstraction</li>
+          <li class="t-todo">Channel preferences &amp; tenant channel config</li>
+          <li class="t-todo">Retry &amp; delivery confirmation logic</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Runtime Integration &amp; Frontend</h4>
+        <ul class="tasks">
+          <li class="t-todo">Agents emit Telegram notifications &amp; approvals via channel abstraction</li>
+          <li class="t-todo">Telegram HITL approve/reject actions</li>
+          <li class="t-todo">Admin settings UI for Telegram connection</li>
+          <li class="t-todo">Traced in AgentActivityLog</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Testing &amp; Exit Criteria</h4>
+        <ul class="tasks">
+          <li class="t-todo">Webhook tests + delivery tests</li>
+          <li class="t-todo">Retry tests + tenant isolation tests</li>
+          <li class="t-todo">Tenant can connect Telegram · notifications delivered · approvals work</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 4 -->
+  <div class="sprint todo collapsed">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">4</div>
+      <div class="titles">
+        <div class="t">PDM Agent + PBM Agent</div>
+        <div class="win">Sprint 4 · production agents on BaseAgent runtime</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Migrate PDM Agent from Phase 2 seams to real BaseAgent subclass</li>
+          <li>New PBM Agent for partner business management workflows</li>
+          <li>Full LLM-powered perceive/analyze/decide with agent memory</li>
+          <li>Policy + guardrail integration for all agent actions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 5 -->
+  <div class="sprint todo collapsed">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">5</div>
+      <div class="titles">
+        <div class="t">Deal Intelligence + Enablement</div>
+        <div class="win">Sprint 5</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Deal scoring &amp; win-probability intelligence agent</li>
+          <li>Partner enablement recommendations</li>
+          <li>Content &amp; training gap analysis via agent memory</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 6 -->
+  <div class="sprint todo collapsed">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">6</div>
+      <div class="titles">
+        <div class="t">Analytics &amp; Forecast</div>
+        <div class="win">Sprint 6</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Pipeline forecast agent with LLM reasoning</li>
+          <li>Revenue &amp; partner performance analytics</li>
+          <li>Proactive anomaly detection &amp; alerts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 7 -->
+  <div class="sprint todo collapsed">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">7</div>
+      <div class="titles">
+        <div class="t">Agent Configuration UI + Inbox</div>
+        <div class="win">Sprint 7</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Unified agent configuration admin (per-tenant, per-agent modes)</li>
+          <li>Cross-agent inbox for advisory &amp; gated actions</li>
+          <li>Agent activity timeline &amp; audit trail UI</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 8 -->
+  <div class="sprint todo collapsed">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">8</div>
+      <div class="titles">
+        <div class="t">QA Agent</div>
+        <div class="win">Sprint 8</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Autonomous QA agent on BaseAgent runtime</li>
+          <li>Regression test generation &amp; execution</li>
+          <li>Release gate integration with eval harness</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 9 -->
+  <div class="sprint todo collapsed">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">9</div>
+      <div class="titles">
+        <div class="t">+11 Languages (EMEA/Asia i18n)</div>
+        <div class="win">Sprint 9 · expand from 20 → 31 locales</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>11 new EMEA/Asia locale catalogues</li>
+          <li>RTL/CJK/Devanagari visual QA for new locales</li>
+          <li>Notification template fan-out per new locale</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- P3 SPRINT 10 -->
+  <div class="sprint todo collapsed">
+    <div class="head">
+      <span class="chevron" aria-hidden="true">▾</span>
+      <div class="num">10</div>
+      <div class="titles">
+        <div class="t">Production Hardening</div>
+        <div class="win">Sprint 10 · Phase 3 sign-off gate</div>
+      </div>
+      <span class="status todo">Planned</span>
+    </div>
+    <div class="body">
+      <div class="grp">
+        <h4>Scope</h4>
+        <ul class="tasks">
+          <li>Load &amp; stress testing for agent runtime at scale</li>
+          <li>Security review (agent RBAC, LLM prompt injection, data isolation)</li>
+          <li>Cost monitoring &amp; tenant budget enforcement in production</li>
+          <li>Full verification pass + go/no-go checklist</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  </div><!-- /group upcoming -->
+
+  </div><!-- /phase3-panel -->
+
+  <footer>
+    Generated from the engineering delivery log · Phase 2 merged PRs #13–#34 · Phase 3 on branch <code>claude/competent-cray-e782ba</code> · open <code>docs/phase2-tracker.html</code> in any browser · use top tabs to switch phases
+  </footer>
+
 </div>
+
+<script>
+  (function () {
+    var panels = {
+      phase2: document.getElementById('phase2-panel'),
+      phase3: document.getElementById('phase3-panel')
+    };
+    var phaseTabs = Array.prototype.slice.call(document.querySelectorAll('.phase-bar button'));
+
+    function activePanel() {
+      return document.querySelector('.phase-panel.active');
+    }
+
+    function animateProgress(panel) {
+      if (!panel) return;
+      var fill = panel.querySelector('.progress .fill');
+      if (!fill) return;
+      fill.style.width = '0';
+      var target = fill.getAttribute('data-target') || '0%';
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { fill.style.width = target; });
+      });
+    }
+
+    function setPhase(phase) {
+      phaseTabs.forEach(function (tab) {
+        var on = tab.getAttribute('data-phase') === phase;
+        tab.classList.toggle('active', on);
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      Object.keys(panels).forEach(function (key) {
+        var p = panels[key];
+        var on = key === phase;
+        p.classList.toggle('active', on);
+        p.hidden = !on;
+      });
+      animateProgress(panels[phase]);
+      syncToggleAllLabel();
+    }
+
+    phaseTabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        setPhase(tab.getAttribute('data-phase'));
+        var f = panels[tab.getAttribute('data-phase')].getAttribute('data-filter') || 'all';
+        history.replaceState(null, '', '#' + tab.getAttribute('data-phase') + (f !== 'all' ? '/' + f : ''));
+      });
+    });
+
+    // ── Filter chips (scoped per phase panel) ──
+    document.querySelectorAll('.phase-panel .filters').forEach(function (group) {
+      var panel = group.closest('.phase-panel');
+      var filterBtns = Array.prototype.slice.call(group.querySelectorAll('button'));
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var f = btn.getAttribute('data-filter');
+          panel.setAttribute('data-filter', f);
+          filterBtns.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          var phase = panel.id.replace('-panel', '');
+          history.replaceState(null, '', '#' + phase + (f !== 'all' ? '/' + f : ''));
+          syncToggleAllLabel();
+        });
+      });
+    });
+
+    // ── Collapsible sprints ──
+    var heads = Array.prototype.slice.call(document.querySelectorAll('.sprint .head'));
+    heads.forEach(function (head) {
+      var sprint = head.closest('.sprint');
+      head.setAttribute('role', 'button');
+      head.setAttribute('tabindex', '0');
+      head.setAttribute('aria-expanded', sprint.classList.contains('collapsed') ? 'false' : 'true');
+
+      function toggle() {
+        var collapsed = sprint.classList.toggle('collapsed');
+        head.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        syncToggleAllLabel();
+      }
+      head.addEventListener('click', toggle);
+      head.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
+
+    // ── Expand all / Collapse all (per phase) ──
+    function visibleSprints(panel) {
+      return Array.prototype.slice.call(panel.querySelectorAll('.sprint .head'))
+        .filter(function (h) { return h.offsetParent !== null; });
+    }
+    function syncToggleAllLabel() {
+      document.querySelectorAll('.phase-toggle-all').forEach(function (btn) {
+        var panel = panels[btn.getAttribute('data-phase')];
+        if (!panel || !panel.classList.contains('active')) return;
+        var anyOpen = visibleSprints(panel).some(function (h) {
+          return !h.closest('.sprint').classList.contains('collapsed');
+        });
+        btn.textContent = anyOpen ? 'Collapse all' : 'Expand all';
+      });
+    }
+    document.querySelectorAll('.phase-toggle-all').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var panel = panels[btn.getAttribute('data-phase')];
+        if (!panel) return;
+        var anyOpen = visibleSprints(panel).some(function (h) {
+          return !h.closest('.sprint').classList.contains('collapsed');
+        });
+        visibleSprints(panel).forEach(function (h) {
+          var s = h.closest('.sprint');
+          s.classList.toggle('collapsed', anyOpen);
+          h.setAttribute('aria-expanded', anyOpen ? 'false' : 'true');
+        });
+        syncToggleAllLabel();
+      });
+    });
+
+    // ── Deep-link: #phase2, #phase3, #phase3/done, #done (legacy) ──
+    var hash = (location.hash || '').replace('#', '');
+    var parts = hash.split('/');
+    var phase = (parts[0] === 'phase2' || parts[0] === 'phase3') ? parts[0] : 'phase2';
+    var filter = parts[1] || (hash === 'done' || hash === 'todo' || hash === 'all' ? hash : 'all');
+    if (hash === 'phase3') phase = 'phase3';
+    setPhase(phase);
+    if (filter === 'done' || filter === 'todo' || filter === 'all') {
+      var preset = panels[phase].querySelector('.filters button[data-filter="' + filter + '"]');
+      if (preset) preset.click();
+    } else {
+      animateProgress(panels[phase]);
+    }
+  })();
+</script>
 </body>
 </html>
