@@ -585,28 +585,6 @@
   </div>
   </div><!-- /group completed -->
 
-  <div class="group" data-group="upcoming">
-
-  <h2 class="sec">After Phase 2 ships — verification &amp; next steps</h2>
-  <div class="sprint todo">
-    <div class="body" style="border-top:none; padding-top:18px">
-      <div class="grp" style="margin-top:0">
-        <h4>To verify after Phase 2 is complete</h4>
-        <ul class="tasks">
-          <li>Production monitoring &amp; alerting live (errors, latency, queues)</li>
-          <li>Real-usage telemetry flowing from new modules (IMPL, PDM, LMS)</li>
-          <li>Tenant onboarding validated on the new feature set</li>
-          <li>Backup &amp; disaster-recovery drill on production data</li>
-          <li>Cost / performance review under real load</li>
-          <li>Stakeholder demo + feedback capture</li>
-          <li>Phase 3 backlog groomed (live LLM, +11 languages, Telegram)</li>
-          <li>Post-Phase-2 design refresh kicked off (separate workstream)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  </div><!-- /group upcoming -->
-
   </div><!-- /phase2-panel -->
 
   <!-- ═══════════════════ PHASE 3 ═══════════════════ -->
@@ -615,32 +593,32 @@
   <header class="top">
     <div class="eyebrow">PartnerOS · Delivery Tracker</div>
     <h1>Phase 3 — AI Agents &amp; i18n Expansion</h1>
-    <p class="sub">Full AI agent runtime (LLM gateway, memory, orchestration, guardrails) plus EMEA/Asia language expansion. Sprints 1–2 delivered the production-ready runtime foundation, Sprint 3 the Telegram channel, Sprint 4 the PDM Agent (LLM + vector memory upgrade) and the new PBM Agent, and Sprint 5 the Deal Intelligence + Enablement agents — four production agents now run on <code>BaseAgent</code>. All future agents extend <code>BaseAgent</code>.</p>
+    <p class="sub">Full AI agent runtime (LLM gateway, memory, orchestration, guardrails) plus EMEA/Asia language expansion. Sprints 1–2 delivered the production-ready runtime foundation, Sprint 3 the Telegram channel, Sprint 4 the PDM Agent (LLM + vector memory upgrade) and the new PBM Agent, Sprint 5 the Deal Intelligence + Enablement agents, Sprint 6 the Analytics &amp; Forecast Agent, Sprint 7 the no-code Agent Configuration UI + unified Agent Inbox over all five, and Sprint 8 the full QA Agent (risk prioritisation, pre/post snapshot diff, coverage dashboard) — six production agents now run on <code>BaseAgent</code>, fully configurable and governed by one HITL queue. All future agents extend <code>BaseAgent</code>.</p>
     <div class="meta-row">
-      <span class="pill">Status as of <b>23 Jun 2026</b></span>
-      <span class="pill">Branch <b>claude/affectionate-northcutt-99a86a</b></span>
+      <span class="pill">Status as of <b>24 Jun 2026</b></span>
+      <span class="pill">Branch <b>claude/qa-agent-full-sprint8</b></span>
       <span class="pill">Cadence <b>2-week sprints × 10</b></span>
-      <span class="pill">Test suite <b>1675 API + 384 web passing</b></span>
+      <span class="pill">Test suite <b>1735 API + 384 web passing</b></span>
     </div>
   </header>
 
   <section class="cards">
-    <div class="card green"><div class="n">5</div><div class="l">Sprints complete</div></div>
+    <div class="card green"><div class="n">8</div><div class="l">Sprints complete</div></div>
     <div class="card amber"><div class="n">0</div><div class="l">Sprints in progress</div></div>
     <div class="card blue"><div class="n">10</div><div class="l">Sprints in plan</div></div>
-    <div class="card"><div class="n">50%</div><div class="l">Phase 3 progress</div></div>
+    <div class="card"><div class="n">80%</div><div class="l">Phase 3 progress</div></div>
   </section>
 
   <div class="progress">
-    <div class="track"><div class="fill" data-target="50%"></div></div>
-    <div class="cap"><span>Sprint 1 · Runtime I</span><span><b style="color:var(--ink)">5 done</b></span><span>Sprint 10 · Hardening</span></div>
+    <div class="track"><div class="fill" data-target="80%"></div></div>
+    <div class="cap"><span>Sprint 1 · Runtime I</span><span><b style="color:var(--ink)">8 done</b></span><span>Sprint 10 · Hardening</span></div>
   </div>
 
   <div class="toolbar" role="region" aria-label="Phase 3 tracker controls">
     <div class="filters" role="group" aria-label="Filter sprints">
       <button data-filter="all" class="active" aria-pressed="true">All<span class="c">10</span></button>
-      <button data-filter="done" aria-pressed="false">Completed<span class="c">5</span></button>
-      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">5</span></button>
+      <button data-filter="done" aria-pressed="false">Completed<span class="c">8</span></button>
+      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">2</span></button>
     </div>
     <span class="spacer"></span>
     <button class="ghost phase-toggle-all" data-phase="phase3" aria-label="Collapse or expand all sprints">Collapse all</button>
@@ -869,79 +847,129 @@
       </div>
     </div>
   </div>
-  </div><!-- /group completed -->
-
-  <div class="group" data-group="upcoming">
-  <h2 class="sec">Upcoming sprints</h2>
-
   <!-- P3 SPRINT 6 -->
-  <div class="sprint todo collapsed">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">6</div>
       <div class="titles">
-        <div class="t">Analytics &amp; Forecast</div>
-        <div class="win">Sprint 6</div>
+        <div class="t">Analytics &amp; Forecast Agent</div>
+        <div class="win">Sprint 6 · <span class="date-tag">completed 24 Jun 2026</span></div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>Forecast + pipeline + ROI + anomalies</h4>
         <ul class="tasks">
-          <li>Pipeline forecast agent with LLM reasoning</li>
-          <li>Revenue &amp; partner performance analytics</li>
-          <li>Proactive anomaly detection &amp; alerts</li>
+          <li>Rolling 90-day revenue forecast = probability-weighted pipeline-in-window + velocity run-rate (historical win rate + deal velocity)</li>
+          <li>Pipeline-by-stage modelling and partner ROI ranking</li>
+          <li>Forecast-deviation anomaly detection vs the previous snapshot (advisory flags)</li>
+          <li>All money rendered in the tenant currency via the Phase 2 resolver + Intl.NumberFormat</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Executive digest + tier progression</h4>
+        <ul class="tasks">
+          <li>Weekly LLM executive digest per recipient locale (email + in-app), deterministic fallback</li>
+          <li>Monthly tier-progression recommendations via the Phase 2 tier engine → advisory to PBM with evidence</li>
+          <li>Scheduler: weekly digest on configured weekday + monthly tier eval on configured day, under Redis leader lock</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Surface + verification</h4>
+        <ul class="tasks">
+          <li>Programme Analytics dashboard: forecast cards, pipeline bar chart, anomaly callouts, ROI table, digest viewer, review queue</li>
+          <li>Agent on BaseAgent (forecast + digest autonomous; anomalies + tier recs advisory); nav added to all 20 locales</li>
+          <li>Migration 20260627000000_phase3_sprint6_analytics_forecast (config + AnalyticsSnapshot + ExecutiveDigest)</li>
+          <li>+15 API tests · Analytics &amp; Forecast golden eval at 100%</li>
         </ul>
       </div>
     </div>
   </div>
-
   <!-- P3 SPRINT 7 -->
-  <div class="sprint todo collapsed">
+  <div class="sprint inprog">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">7</div>
       <div class="titles">
-        <div class="t">Agent Configuration UI + Inbox</div>
-        <div class="win">Sprint 7</div>
+        <div class="t">Agent Configuration UI (no-code) + unified Agent Inbox</div>
+        <div class="win">Sprint 7 · <span class="date-tag">in progress</span></div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status inprog">Half done</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>Unified agent configuration (backend)</h4>
         <ul class="tasks">
-          <li>Unified agent configuration admin (per-tenant, per-agent modes)</li>
-          <li>Cross-agent inbox for advisory &amp; gated actions</li>
-          <li>Agent activity timeline &amp; audit trail UI</li>
+          <li class="t-done">Generic <code>AgentConfig</code> per tenant + per agent: enable/disable, action toggles, per-action HITL classification cap, business-hours window, channels, triggers</li>
+          <li class="t-done">Config versioning + audit (<code>AgentConfigVersion</code> snapshots); safe defaults derived from the agent policy; validation</li>
+          <li class="t-done">GuardrailService now consults the effective config at the single Act chokepoint (agent-disabled / action-disabled / classification cap / config business hours) — backward-compatible</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>No-code UI + unified inbox (frontend)</h4>
+        <ul class="tasks">
+          <li class="t-done">Agent Configuration UI: per-agent editor — enable, per-action approval requirement + on/off, business hours, channels — every save versioned</li>
+          <li class="t-done">Unified Agent Inbox: all advisory/gated drafts (PDM, PBM, Deal, Enablement, Analytics) with Accept / Edit / Reject, rationale, and source signals</li>
+          <li class="t-todo">Decision <code>payload</code> now persisted to the activity log so drafts/narratives are rendered and editable in the inbox</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Surface + verification</h4>
+        <ul class="tasks">
+          <li class="t-todo">New <code>/dashboard/agent-config</code> + <code>/dashboard/agent-inbox</code>; nav added to all 20 locales</li>
+          <li class="t-todo">Endpoints <code>/agent-config/*</code> + <code>/agent-runtime/inbox/summary</code> + edit-on-accept</li>
+          <li class="t-todo">Migration 20260628000000_phase3_sprint7_agent_config</li>
+          <li class="t-todo">+18 API tests (config defaults/merge/validation/versioning + guardrail config integration) · 178 agent-suite tests green</li>
         </ul>
       </div>
     </div>
   </div>
-
   <!-- P3 SPRINT 8 -->
-  <div class="sprint todo collapsed">
+  <div class="sprint todo">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">8</div>
       <div class="titles">
-        <div class="t">QA Agent</div>
-        <div class="win">Sprint 8</div>
+        <div class="t">QA Agent full suite + coverage dashboard</div>
+        <div class="win">Sprint 8 · <span class="date-tag">incomplete</span></div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status todo">Incomplete</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>QA Agent on the runtime + risk prioritisation</h4>
         <ul class="tasks">
-          <li>Autonomous QA agent on BaseAgent runtime</li>
-          <li>Regression test generation &amp; execution</li>
-          <li>Release gate integration with eval harness</li>
+          <li>QaAgent on BaseAgent (perceive→analyse→decide→remember): risk-prioritised plan, release-gate recommendation, release report</li>
+          <li>Risk-based prioritisation: criticality + flakiness + recent failures + staleness + vector-memory of past risk</li>
+          <li>Release-gate recommendation gated on any P1/P2 failure; deterministic enforcement stays in QaService (CI gate)</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Pre/post snapshot diff + coverage/gap analysis</h4>
+        <ul class="tasks">
+          <li>QaSnapshot model: BASELINE (pre-upgrade) vs CURRENT (post-upgrade) API responses + UI screenshot hashes</li>
+          <li>Field-level diff flags deviations as regressions (volatile fields masked); UI snapshots compared by content hash</li>
+          <li>Coverage by module / criticality / phase + gap analysis (no-P1 modules, un-automated P1/P2, missing test types)</li>
+          <li>k6 performance-regression suite (regression.js + tight per-endpoint p95 ceilings) for the STAGING gate</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Surface + verification</h4>
+        <ul class="tasks">
+          <li>QA Coverage &amp; Regression dashboard: coverage tables, gap analysis, risk-prioritised plan, regression-diff viewer</li>
+          <li>Endpoints /qa/{coverage-analysis,prioritise,snapshots,snapshots/diff,agent/run,agent/eval}; nav in all 20 locales</li>
+          <li>Migration 20260629000000_phase3_sprint8_qa_snapshots</li>
+          <li>+27 API tests (qa.logic 11 + qa.agent/eval 5 + existing 91 green) · QA golden eval at 100%</li>
         </ul>
       </div>
     </div>
   </div>
+  </div><!-- /group completed -->
+
+  <div class="group" data-group="upcoming">
+  <h2 class="sec">Upcoming sprints</h2>
 
   <!-- P3 SPRINT 9 -->
   <div class="sprint todo collapsed">
@@ -994,7 +1022,7 @@
   </div><!-- /phase3-panel -->
 
   <footer>
-    Generated from the engineering delivery log · Phase 2 merged PRs #13–#34 · Phase 3 Sprint 5 on branch <code>claude/affectionate-northcutt-99a86a</code> · open <code>docs/phase2-tracker.html</code> in any browser · use top tabs to switch phases
+    Generated from the engineering delivery log · Phase 2 merged PRs #13–#34 · Phase 3 Sprint 8 on branch <code>claude/qa-agent-full-sprint8</code> · open <code>docs/phase2-tracker.html</code> in any browser · use top tabs to switch phases
   </footer>
 
 </div>
