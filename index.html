@@ -593,32 +593,32 @@
   <header class="top">
     <div class="eyebrow">PartnerOS · Delivery Tracker</div>
     <h1>Phase 3 — AI Agents &amp; i18n Expansion</h1>
-    <p class="sub">Full AI agent runtime (LLM gateway, memory, orchestration, guardrails) plus EMEA/Asia language expansion. Sprints 1–2 delivered the production-ready runtime foundation, Sprint 3 the Telegram channel, Sprint 4 the PDM Agent (LLM + vector memory upgrade) and the new PBM Agent, Sprint 5 the Deal Intelligence + Enablement agents, Sprint 6 the Analytics &amp; Forecast Agent, Sprint 7 the no-code Agent Configuration UI + unified Agent Inbox over all five, and Sprint 8 the full QA Agent (risk prioritisation, pre/post snapshot diff, coverage dashboard) — six production agents now run on <code>BaseAgent</code>, fully configurable and governed by one HITL queue. All future agents extend <code>BaseAgent</code>.</p>
+    <p class="sub">Full AI agent runtime (LLM gateway, memory, orchestration, guardrails) plus EMEA/Asia language expansion and production deployment maturity. Sprints 1–2 delivered the runtime foundation, Sprint 3 the Telegram channel, Sprint 4 the PDM (LLM upgrade) + PBM agents, Sprint 5 the Deal Intelligence + Enablement agents, Sprint 6 the Analytics &amp; Forecast Agent, Sprint 7 the no-code Agent Configuration UI + unified Agent Inbox, Sprint 8 the full QA Agent (risk prioritisation, pre/post snapshot diff, coverage dashboard), Sprint 9 the +11-language expansion (Persian RTL, Thai word-break → 31 locales), and Sprint 10 the blue-green/canary deploy maturity + agent safety hardening. <b>All 10 sprints complete — Phase 3 delivered.</b></p>
     <div class="meta-row">
-      <span class="pill">Status as of <b>24 Jun 2026</b></span>
-      <span class="pill">Branch <b>claude/qa-agent-full-sprint8</b></span>
+      <span class="pill">Status as of <b>26 Jun 2026</b></span>
+      <span class="pill">Branch <b>claude/flamboyant-heyrovsky-c54431</b> · PR #61</span>
       <span class="pill">Cadence <b>2-week sprints × 10</b></span>
-      <span class="pill">Test suite <b>1735 API + 384 web passing</b></span>
+      <span class="pill">Test suite <b>1774 API + 411 web passing</b></span>
     </div>
   </header>
 
   <section class="cards">
-    <div class="card green"><div class="n">8</div><div class="l">Sprints complete</div></div>
+    <div class="card green"><div class="n">10</div><div class="l">Sprints complete</div></div>
     <div class="card amber"><div class="n">0</div><div class="l">Sprints in progress</div></div>
     <div class="card blue"><div class="n">10</div><div class="l">Sprints in plan</div></div>
-    <div class="card"><div class="n">80%</div><div class="l">Phase 3 progress</div></div>
+    <div class="card green"><div class="n">100%</div><div class="l">Phase 3 progress</div></div>
   </section>
 
   <div class="progress">
-    <div class="track"><div class="fill" data-target="80%"></div></div>
-    <div class="cap"><span>Sprint 1 · Runtime I</span><span><b style="color:var(--ink)">8 done</b></span><span>Sprint 10 · Hardening</span></div>
+    <div class="track"><div class="fill" data-target="100%"></div></div>
+    <div class="cap"><span>Sprint 1 · Runtime I</span><span><b style="color:var(--ink)">10 done · Phase 3 delivered</b></span><span>Sprint 10 · Hardening</span></div>
   </div>
 
   <div class="toolbar" role="region" aria-label="Phase 3 tracker controls">
     <div class="filters" role="group" aria-label="Filter sprints">
       <button data-filter="all" class="active" aria-pressed="true">All<span class="c">10</span></button>
-      <button data-filter="done" aria-pressed="false">Completed<span class="c">8</span></button>
-      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">2</span></button>
+      <button data-filter="done" aria-pressed="false">Completed<span class="c">10</span></button>
+      <button data-filter="todo" aria-pressed="false">Upcoming<span class="c">0</span></button>
     </div>
     <span class="spacer"></span>
     <button class="ghost phase-toggle-all" data-phase="phase3" aria-label="Collapse or expand all sprints">Collapse all</button>
@@ -888,15 +888,15 @@
     </div>
   </div>
   <!-- P3 SPRINT 7 -->
-  <div class="sprint inprog">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">7</div>
       <div class="titles">
         <div class="t">Agent Configuration UI (no-code) + unified Agent Inbox</div>
-        <div class="win">Sprint 7 · <span class="date-tag">in progress</span></div>
+        <div class="win">Sprint 7 · <span class="date-tag">completed 25 Jun 2026</span></div>
       </div>
-      <span class="status inprog">Half done</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
@@ -912,30 +912,38 @@
         <ul class="tasks">
           <li class="t-done">Agent Configuration UI: per-agent editor — enable, per-action approval requirement + on/off, business hours, channels — every save versioned</li>
           <li class="t-done">Unified Agent Inbox: all advisory/gated drafts (PDM, PBM, Deal, Enablement, Analytics) with Accept / Edit / Reject, rationale, and source signals</li>
-          <li class="t-todo">Decision <code>payload</code> now persisted to the activity log so drafts/narratives are rendered and editable in the inbox</li>
+          <li class="t-done">Decision <code>payload</code> now persisted to the activity log so drafts/narratives are rendered and editable in the inbox</li>
         </ul>
       </div>
       <div class="grp">
         <h4>Surface + verification</h4>
         <ul class="tasks">
-          <li class="t-todo">New <code>/dashboard/agent-config</code> + <code>/dashboard/agent-inbox</code>; nav added to all 20 locales</li>
-          <li class="t-todo">Endpoints <code>/agent-config/*</code> + <code>/agent-runtime/inbox/summary</code> + edit-on-accept</li>
-          <li class="t-todo">Migration 20260628000000_phase3_sprint7_agent_config</li>
-          <li class="t-todo">+18 API tests (config defaults/merge/validation/versioning + guardrail config integration) · 178 agent-suite tests green</li>
+          <li class="t-done">New <code>/dashboard/agent-config</code> + <code>/dashboard/agent-inbox</code>; nav added to all 20 locales</li>
+          <li class="t-done">Endpoints <code>/agent-config/*</code> + <code>/agent-runtime/inbox/summary</code> + edit-on-accept</li>
+          <li class="t-done">Migration 20260628000000_phase3_sprint7_agent_config</li>
+          <li class="t-done">+18 API tests (config defaults/merge/validation/versioning + guardrail config integration) · 178 agent-suite tests green</li>
         </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Sidebar</span> New "Agent Configuration" + "Agent Inbox" nav items</div>
+          <div class="screen"><span class="where">Settings</span> No-code per-agent editor (triggers, actions, approvals, hours)</div>
+          <div class="screen"><span class="where">Page</span> Unified Agent Inbox — Accept/Edit/Reject across all agents</div>
+        </div>
       </div>
     </div>
   </div>
   <!-- P3 SPRINT 8 -->
-  <div class="sprint todo">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">8</div>
       <div class="titles">
         <div class="t">QA Agent full suite + coverage dashboard</div>
-        <div class="win">Sprint 8 · <span class="date-tag">incomplete</span></div>
+        <div class="win">Sprint 8 · <span class="date-tag">completed 25 Jun 2026</span></div>
       </div>
-      <span class="status todo">Incomplete</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
@@ -966,63 +974,112 @@
       </div>
     </div>
   </div>
-  </div><!-- /group completed -->
-
-  <div class="group" data-group="upcoming">
-  <h2 class="sec">Upcoming sprints</h2>
-
   <!-- P3 SPRINT 9 -->
-  <div class="sprint todo collapsed">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">9</div>
       <div class="titles">
-        <div class="t">+11 Languages (EMEA/Asia i18n)</div>
-        <div class="win">Sprint 9 · expand from 20 → 31 locales</div>
+        <div class="t">+11 Languages (EMEA/Asia i18n) — Persian RTL &amp; Thai</div>
+        <div class="win">Sprint 9 · 20 → 31 locales · <span class="date-tag">completed 26 Jun 2026</span></div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>Locales &amp; content</h4>
         <ul class="tasks">
-          <li>11 new EMEA/Asia locale catalogues</li>
-          <li>RTL/CJK/Devanagari visual QA for new locales</li>
-          <li>Notification template fan-out per new locale</li>
+          <li>11 new catalogues: el, cs, hu, ro, uk, da, fa (RTL), sw, th, vi, bn</li>
+          <li>31-locale single source of truth (web config + API allowlist)</li>
+          <li>ICU plural rules — cs/ro 3-form (few), uk 4-form (few + many)</li>
+          <li>Per-locale default currencies + Noto fonts (Arabic / Thai / Bengali / Greek)</li>
+          <li>WhatsApp + SendGrid template fan-out across all 31 locales</li>
         </ul>
+      </div>
+      <div class="grp">
+        <h4>Script engineering</h4>
+        <ul class="tasks">
+          <li>Persian (fa) added to the RTL system — <code>html[dir=rtl]</code>, logical properties, icon flipping</li>
+          <li>Thai word-break via <code>Intl.Segmenter</code> + <code>:lang(th)</code> CSS (no mid-word breaks)</li>
+          <li>Persian digit shaping + Indian/locale numbering verified via Intl</li>
+          <li>Mixed-direction QA (Latin brand tokens inside RTL flow)</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Verification</h4>
+        <ul class="tasks">
+          <li>178-key parity enforced for every locale in CI</li>
+          <li>New <code>sprint9.spec.ts</code> (27) + updated config / API locale specs</li>
+          <li>Web i18n suite 124 green · API locale + template suites green</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Global</span> 31-language locale picker (portal + admin)</div>
+          <div class="screen"><span class="where">Global</span> Persian right-to-left UI; correct Thai line wrapping</div>
+          <div class="screen"><span class="where">Global</span> Localised dates, numbers &amp; currency per region</div>
+          <div class="screen"><span class="where">Notifications</span> WhatsApp + email in the recipient's language</div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- P3 SPRINT 10 -->
-  <div class="sprint todo collapsed">
+  <div class="sprint done">
     <div class="head">
       <span class="chevron" aria-hidden="true">▾</span>
       <div class="num">10</div>
       <div class="titles">
-        <div class="t">Production Hardening</div>
-        <div class="win">Sprint 10 · Phase 3 sign-off gate</div>
+        <div class="t">Blue-green / Canary deploy maturity + Phase 3 hardening</div>
+        <div class="win">Sprint 10 · Phase 3 sign-off · <span class="date-tag">completed 26 Jun 2026</span></div>
       </div>
-      <span class="status todo">Planned</span>
+      <span class="status done">Done</span>
     </div>
     <div class="body">
       <div class="grp">
-        <h4>Scope</h4>
+        <h4>Production deployment maturity</h4>
         <ul class="tasks">
-          <li>Load &amp; stress testing for agent runtime at scale</li>
-          <li>Security review (agent RBAC, LLM prompt injection, data isolation)</li>
-          <li>Cost monitoring &amp; tenant budget enforcement in production</li>
-          <li>Full verification pass + go/no-go checklist</li>
+          <li>Canary SLO gate — per-sample error-rate + p95 latency thresholds → auto-abort/rollback</li>
+          <li>Sub-60s post-cutover rollback (<code>slo-watch.sh</code> + blue-green auto-revert to old colour)</li>
+          <li>Perf gate workflow — k6 1k-VU dashboard p95 &lt; 300ms, wired into deploy-prod as a precondition</li>
+          <li>PROD promotion now needs QA gate + perf gate + canary SLO + post-cutover watch</li>
         </ul>
+      </div>
+      <div class="grp">
+        <h4>Agent safety hardening</h4>
+        <ul class="tasks">
+          <li>Prompt-injection / jailbreak defanging on partner-supplied text</li>
+          <li>PII + secret redaction before any LLM call or trace log</li>
+          <li>Per-(tenant, agent) rate limit (cost-runaway guard) + LLM circuit breaker</li>
+          <li>Red-team suite: injection, RBAC-scope escape, guardrail bypass, cost-runaway</li>
+        </ul>
+      </div>
+      <div class="grp">
+        <h4>Verification &amp; docs</h4>
+        <ul class="tasks">
+          <li>Multi-agent E2E chain spec (deal close → Deal Intel → PBM → PDM → Analytics → QA gate)</li>
+          <li>Release notes, Phase 3 security review, WCAG 2.1 AA re-audit (new locales/RTL)</li>
+          <li>CI-CD + on-call runbook additions</li>
+          <li>API agent/llm suites 241 green (incl. 5 new safety specs) · tsc + bash -n clean</li>
+        </ul>
+      </div>
+      <div class="visible">
+        <h4>👁 What the user sees</h4>
+        <div class="screens">
+          <div class="screen"><span class="where">Internal</span> Zero-downtime releases with automatic rollback on regressions</div>
+          <div class="screen"><span class="where">Internal</span> AI agents guarded against prompt-injection, data leaks &amp; runaway cost</div>
+          <div class="screen"><span class="where">Stakeholders</span> Phase 3 security + accessibility sign-off reports</div>
+        </div>
       </div>
     </div>
   </div>
-  </div><!-- /group upcoming -->
+  </div><!-- /group completed -->
 
   </div><!-- /phase3-panel -->
 
   <footer>
-    Generated from the engineering delivery log · Phase 2 merged PRs #13–#34 · Phase 3 Sprint 8 on branch <code>claude/qa-agent-full-sprint8</code> · open <code>docs/phase2-tracker.html</code> in any browser · use top tabs to switch phases
+    Generated from the engineering delivery log · Phase 2 merged PRs #13–#34 · Phase 3 complete (Sprints 1–10) · Sprints 9 &amp; 10 on branch <code>claude/flamboyant-heyrovsky-c54431</code> (PR #61) · open <code>docs/phase2-tracker.html</code> in any browser · use top tabs to switch phases
   </footer>
 
 </div>
